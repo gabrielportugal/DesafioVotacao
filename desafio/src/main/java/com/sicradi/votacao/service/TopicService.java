@@ -2,6 +2,7 @@ package com.sicradi.votacao.service;
 
 import com.sicradi.votacao.repository.TopicRepository;
 import com.sicradi.votacao.domain.model.Topic;
+import com.sicradi.votacao.exceptions.ResourceNotFoundException;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -23,7 +24,7 @@ public class TopicService {
   // Retorna uma pauta por ID
   public Topic getTopicById(Long id) {
     Optional<Topic> topic = this.topicRepository.findById(id);
-    return topic.orElse(null);
+    return topic.orElseThrow(() -> new ResourceNotFoundException("Topic not found with id " + id));
   }
 
   // Cria uma nova pauta
@@ -33,6 +34,10 @@ public class TopicService {
 
   // Deleta uma pauta por ID
   public void deleteTopic(Long id) {
+    if (!this.topicRepository.existsById(id)) {
+      throw new ResourceNotFoundException("Topic not found with id " + id);
+    }
+
     this.topicRepository.deleteById(id);
   }
 

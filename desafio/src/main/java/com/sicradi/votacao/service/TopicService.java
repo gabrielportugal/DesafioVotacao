@@ -3,7 +3,6 @@ package com.sicradi.votacao.service;
 import com.sicradi.votacao.repository.TopicRepository;
 import com.sicradi.votacao.domain.model.Topic;
 import com.sicradi.votacao.exceptions.ResourceNotFoundException;
-
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;

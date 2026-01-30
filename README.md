@@ -1,3 +1,16 @@
+
+cls & .\mvnw.cmd spring-boot:run
+
+
+
+
+
+
+
+
+
+
+
 # Votação
 
 ## Objetivo

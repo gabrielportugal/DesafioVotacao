@@ -111,3 +111,8 @@ A API estará disponível em:
 ```bash
 http://localhost:8080/api/v1
 ```
+
+## Autor
+**Gabriel Portugal**  
+💼 [Portfólio](https://gabrielportugal.web.app/)  
+💻 [LinkedIn](https://www.linkedin.com/in/gabriel-portugal-b26a13188/)

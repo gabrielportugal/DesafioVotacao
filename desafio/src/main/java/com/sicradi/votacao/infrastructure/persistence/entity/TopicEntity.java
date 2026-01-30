@@ -1,27 +1,32 @@
+package com.sicradi.votacao.infrastructure.persistence.entity;
 
-package com.sicradi.votacao.domain.model;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-public class Topic {
+@Entity
+@Table(name = "topic")
+public class TopicEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "top_id")
     private Long id;
+
+    @Column(name = "top_title", nullable = false)
     private String title;
+
+    @Column(name = "top_description", columnDefinition = "text")
     private String description;
+
+    @Column(name = "top_status", nullable = false)
     private String status;
+
+    @Column(name = "top_created_at", nullable = true, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
+
+    @Column(name = "top_updated_at", nullable = true, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    // Construtores, getters, setters e regras de negócio aqui
-    public Topic() {}
-
-    public Topic(String title, String description) {
-        this.title = title;
-        this.description = description;
-        this.status = "OPEN";
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
+    // Getters e setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }

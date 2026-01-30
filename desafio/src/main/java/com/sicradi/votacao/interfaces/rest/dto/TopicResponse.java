@@ -1,26 +1,14 @@
-
-package com.sicradi.votacao.domain.model;
+package com.sicradi.votacao.interfaces.rest.dto;
 
 import java.time.LocalDateTime;
 
-public class Topic {
+public class TopicResponse {
     private Long id;
     private String title;
     private String description;
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    // Construtores, getters, setters e regras de negócio aqui
-    public Topic() {}
-
-    public Topic(String title, String description) {
-        this.title = title;
-        this.description = description;
-        this.status = "OPEN";
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

@@ -33,8 +33,6 @@ public class VotingSessionEntity {
     @Column(name = "vse_closed_at")
     private LocalDateTime closedAt;
 
-    @Column(name = "vse_closed_by")
-    private String closedBy;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vse_status", nullable = false)

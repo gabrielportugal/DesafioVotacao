@@ -5,7 +5,8 @@ import com.sicradi.votacao.domain.repository.VotingSessionRepository;
 import com.sicradi.votacao.domain.repository.VoteRepository;
 import com.sicradi.votacao.application.usecase.votingsession.CloseAllVotingSessionByTopicId;
 import com.sicradi.votacao.application.usecase.votingsession.CloseVotingSessionUseCase;
-
+import com.sicradi.votacao.application.usecase.votingsession.CheckAndCloseVotingSessionUseCase;
+    
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,6 +41,11 @@ public class TopicUseCaseConfig {
     @Bean
     public GetVoteResultUseCase getVoteResultUseCase(VoteRepository voteRepository) {
         return new GetVoteResultUseCase(voteRepository);
+    }
+
+    @Bean
+    public GetTopicWithVotingSessionsUseCase getTopicWithVotingSessionsUseCase(TopicRepository topicRepository, VotingSessionRepository votingSessionRepository, CheckAndCloseVotingSessionUseCase checkAndCloseVotingSessionUseCase) {
+        return new GetTopicWithVotingSessionsUseCase(topicRepository, votingSessionRepository, checkAndCloseVotingSessionUseCase);
     }
 
 }

@@ -17,7 +17,7 @@ public class VotingSessionRepositoryImpl implements VotingSessionRepository {
     public Optional<VotingSession> findMostRecentOpenByTopicId(Long topicId) {
         return jpaRepository.findOpenNotExpiredByTopicIdOrderByCreatedAtDesc(topicId)
             .stream()
-            .filter(entity -> !VotingSessionMapper.toDomain(entity).isExpired())
+            .filter(entity -> !VotingSessionMapper.toDomain(entity).isExpired()) // Para expiração automática, use CheckAndCloseVotingSessionUseCase se necessário
             .findFirst()
             .map(VotingSessionMapper::toDomain);
     }

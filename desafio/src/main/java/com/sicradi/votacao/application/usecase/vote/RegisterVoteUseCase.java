@@ -6,6 +6,7 @@ import com.sicradi.votacao.domain.repository.TopicRepository;
 import com.sicradi.votacao.domain.repository.VotingSessionRepository;
 import com.sicradi.votacao.domain.model.VotingSession;
 import com.sicradi.votacao.domain.model.VotingSessionStatus;
+import com.sicradi.votacao.application.usecase.votingsession.CheckAndCloseVotingSessionUseCase;
 import com.sicradi.votacao.exceptions.ValidationException;
 import com.sicradi.votacao.exceptions.NotFoundException;
 import com.sicradi.votacao.exceptions.BusinessException;
@@ -15,12 +16,15 @@ public class RegisterVoteUseCase {
     private final VoteRepository voteRepository;
     private final TopicRepository topicRepository;
     private final VotingSessionRepository votingSessionRepository;
+    private final CheckAndCloseVotingSessionUseCase checkAndCloseVotingSessionUseCase;
 
     public RegisterVoteUseCase(VoteRepository voteRepository, TopicRepository topicRepository,
-                               VotingSessionRepository votingSessionRepository) {
+                               VotingSessionRepository votingSessionRepository,
+                               CheckAndCloseVotingSessionUseCase checkAndCloseVotingSessionUseCase) {
         this.voteRepository = voteRepository;
         this.topicRepository = topicRepository;
         this.votingSessionRepository = votingSessionRepository;
+        this.checkAndCloseVotingSessionUseCase = checkAndCloseVotingSessionUseCase;
     }
 
     public Vote execute(Long topicId, String associateId, String choiceRaw) {
@@ -35,12 +39,10 @@ public class RegisterVoteUseCase {
         }
 
         VotingSession votingSession = votingSessionRepository.findMostRecentOpenByTopicId(topicId)
+            .map(checkAndCloseVotingSessionUseCase::checkAndCloseIfExpired)
             .orElseThrow(() -> new NotFoundException("Nenhuma sessão de votação aberta e não expirada encontrada para o tópico."));
-        if (votingSession.isExpired()) {
-            throw new BusinessException("Sessão de votação expirou.");
-        }
-        if (votingSession.getStatus() != VotingSessionStatus.OPEN) {
-            throw new BusinessException("Sessão de votação não está aberta.");
+        if (votingSession.isExpired() || votingSession.getStatus() != VotingSessionStatus.OPEN) {
+            throw new BusinessException("Sessão de votação não está aberta ou já expirou.");
         }
 
         if (voteRepository.findByTopicIdAndAssociateId(topicId, associateId).isPresent()) {

@@ -4,6 +4,7 @@ import com.sicradi.votacao.domain.model.Topic;
 import com.sicradi.votacao.domain.model.VotingSession;
 import com.sicradi.votacao.domain.repository.TopicRepository;
 import com.sicradi.votacao.domain.repository.VotingSessionRepository;
+import com.sicradi.votacao.application.usecase.votingsession.CheckAndCloseVotingSessionUseCase;
 import com.sicradi.votacao.exceptions.NotFoundException;
 import com.sicradi.votacao.interfaces.rest.dto.TopicAndVotingSession;
 import com.sicradi.votacao.interfaces.rest.dto.VotingSessionDTO;
@@ -17,17 +18,22 @@ public class GetTopicWithVotingSessionsUseCase {
 
     private final TopicRepository topicRepository;
     private final VotingSessionRepository votingSessionRepository;
+    private final CheckAndCloseVotingSessionUseCase checkAndCloseVotingSessionUseCase;
 
-    public GetTopicWithVotingSessionsUseCase(TopicRepository topicRepository, VotingSessionRepository votingSessionRepository) {
+    public GetTopicWithVotingSessionsUseCase(TopicRepository topicRepository, VotingSessionRepository votingSessionRepository, CheckAndCloseVotingSessionUseCase checkAndCloseVotingSessionUseCase) {
         this.topicRepository = topicRepository;
         this.votingSessionRepository = votingSessionRepository;
+        this.checkAndCloseVotingSessionUseCase = checkAndCloseVotingSessionUseCase;
     }
 
     public TopicAndVotingSession execute(Long topicId) {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new NotFoundException("Topic not found with id: " + topicId));
         
-        List<VotingSession> sessions = votingSessionRepository.findByTopicId(topicId);
+        List<VotingSession> sessions = votingSessionRepository.findByTopicId(topicId)
+            .stream()
+            .map(checkAndCloseVotingSessionUseCase::checkAndCloseIfExpired)
+            .toList();
         
         TopicAndVotingSession dto = new TopicAndVotingSession();
         dto.setTopicId(topic.getId());
@@ -47,10 +53,8 @@ public class GetTopicWithVotingSessionsUseCase {
         
         if (session.getStatus() != null && !"OPEN".equals(session.getStatus().name())) {
             dto.setClosedAt(session.getClosedAt());
-            dto.setClosedBy(session.getClosedBy());
         } else {
             dto.setClosedAt(null);
-            dto.setClosedBy(null);
         }
 
         return dto;

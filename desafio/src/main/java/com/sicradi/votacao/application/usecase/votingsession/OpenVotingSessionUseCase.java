@@ -50,6 +50,6 @@ public class OpenVotingSessionUseCase {
         List<VotingSession> sessions = votingSessionRepository.findAll();
         return sessions.stream()
             .filter(s -> s.getTopicId().equals(topicId))
-            .anyMatch(s -> VotingSessionStatus.OPEN.equals(s.getStatus()) || !s.isExpired());
+            .anyMatch(s -> VotingSessionStatus.OPEN.equals(s.getStatus()) || !s.isExpired()); // Para expiração automática, use CheckAndCloseVotingSessionUseCase se necessário
     }
 }

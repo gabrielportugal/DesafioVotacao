@@ -14,6 +14,5 @@ public class VotingSessionDTO {
     private LocalDateTime createdAt;
     private Integer duration;
     private LocalDateTime closedAt;
-    private String closedBy;
     
 }

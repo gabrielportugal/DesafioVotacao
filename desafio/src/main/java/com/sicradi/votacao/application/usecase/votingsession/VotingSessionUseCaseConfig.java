@@ -19,4 +19,9 @@ public class VotingSessionUseCaseConfig {
         return new CloseVotingSessionUseCase(votingSessionRepository);
     }
 
+    @Bean
+    public CheckAndCloseVotingSessionUseCase checkAndCloseVotingSessionUseCase(VotingSessionRepository votingSessionRepository) {
+        return new CheckAndCloseVotingSessionUseCase(votingSessionRepository);
+    }
+    
 }

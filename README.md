@@ -1,4 +1,3 @@
-
 # Desafio de Votação
 
 API REST para gerenciamento de pautas, sessões de votação e votos de associados, conforme requisitos do desafio técnico.
@@ -118,7 +117,40 @@ src/main/java/com/sicredi/votacao
 - **interface**  
   Define os pontos de entrada da aplicação, como controllers REST e DTOs. Apenas adapta dados entre o mundo externo e a aplicação.
 
+  # Regras de Negócio e Decisões Arquiteturais
 
+### Regras de Negócio Implementadas
+
+- **Abertura de Pautas (Topic):** Toda pauta é criada com estado inicial `OPEN`, permitindo o início imediato de sessões de votação vinculadas.
+- **Criação de Sessões de Votação (VotingSession):** Sessões são sempre associadas a uma pauta existente, garantindo integridade referencial.
+- **Duração Configurável:** A duração da sessão de votação é definida no momento da criação. Caso não seja informada, um valor padrão é aplicado automaticamente.
+- **Expiração de Sessão:** A expiração é determinada por `createdAt + duration` (em minutos). Após esse período, a sessão não permite novos votos.
+- **Validação de Expiração:** O método de domínio `isExpired()` é utilizado exclusivamente para validação de regra de negócio, sem realizar persistência ou efeitos colaterais.
+- **Centralização do Fechamento:** A atualização do status da sessão (`OPEN` → `CLOSED`) e o registro do `closedAt` são realizados exclusivamente pelo caso de uso `CheckAndCloseVotingSessionUseCase`, garantindo consistência e evitando duplicidade de lógica.
+- **Fechamento Sob Demanda (Lazy Evaluation):** Não há uso de schedulers, threads ou jobs em background. O fechamento ocorre sob demanda: ao acessar ou utilizar uma sessão, o sistema verifica e atualiza seu estado conforme necessário.
+- **Consistência Garantida:** Toda leitura ou uso de sessão de votação (consultas, validações, votação, etc.) obrigatoriamente passa pelo `CheckAndCloseVotingSessionUseCase`, assegurando que o estado retornado sempre reflita a situação real (aberta ou fechada).
+- **Remoção de closedBy:** O campo `closedBy` foi removido da entidade e da tabela, pois não faz parte das regras de negócio do domínio.
+
+### Decisões Arquiteturais
+
+- **Separação de Camadas:**
+  - *Domínio:* Contém entidades e regras de negócio puras, sem dependências técnicas.
+  - *Application:* Implementa casos de uso, orquestrando operações e persistência, sem lógica de domínio.
+  - *Infrastructure:* Responsável por persistência (JPA, repositórios), controllers REST e mapeamentos.
+- **Uso de Mappers:** Conversão entre entidades de domínio, entidades JPA e DTOs é realizada por mappers dedicados, promovendo baixo acoplamento e clareza.
+- **Princípios de DDD Light, Clean Architecture e SOLID:**
+  - O domínio é isolado e protegido de detalhes técnicos.
+  - Casos de uso centralizam regras de aplicação e persistência.
+  - Controllers e infraestrutura apenas adaptam dados e delegam operações.
+  - O projeto favorece baixo acoplamento, alta coesão e facilidade de testes.
+
+Essas decisões garantem que o sistema seja robusto, consistente e de fácil manutenção, alinhado com as melhores práticas de arquitetura backend.
+
+## Estratégia de Fechamento de Sessões
+
+A aplicação utiliza uma estratégia de atualização sob demanda para o fechamento de sessões de votação. Em vez de empregar threads, schedulers ou jobs em background, toda operação de leitura ou uso de uma sessão (como consultas, votação ou obtenção de tópicos) passa por um caso de uso responsável por validar se a sessão expirou. Caso a expiração seja detectada, a sessão é automaticamente fechada e persistida antes de ser retornada.
+
+Essa abordagem é semelhante à utilizada por grandes portais como [Portfólio](https://g1.globo.com/) e [Portal Multiplix](https://www.portalmultiplix.com/) , onde o estado mais recente é atualizado no momento do primeiro acesso, garantindo consistência, simplicidade operacional e menor custo de infraestrutura. Assim, o sistema permanece sempre atualizado sem a complexidade de processos assíncronos contínuos.
 
 ## 🛠️ Como rodar localmente
 

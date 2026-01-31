@@ -6,6 +6,10 @@ import com.sicradi.votacao.domain.repository.TopicRepository;
 import com.sicradi.votacao.domain.repository.VotingSessionRepository;
 import com.sicradi.votacao.domain.model.VotingSession;
 
+import com.sicradi.votacao.exceptions.ValidationException;
+import com.sicradi.votacao.exceptions.NotFoundException;
+import com.sicradi.votacao.exceptions.BusinessException;
+
 public class RegisterVoteUseCase {
   private final VoteRepository voteRepository;
   private final TopicRepository topicRepository;
@@ -20,7 +24,7 @@ public class RegisterVoteUseCase {
 
   public Vote execute(Long topicId, String associateId, String choiceRaw) {
     if (topicId == null || associateId == null || choiceRaw == null) {
-      throw new IllegalArgumentException("Todos os campos são obrigatórios.");
+      throw new ValidationException("Todos os campos são obrigatórios.");
     }
 
     // Conversão de 'Sim'/'Não' para 1/0
@@ -34,27 +38,27 @@ public class RegisterVoteUseCase {
       try {
         choice = Integer.valueOf(choiceRaw);
       } catch (Exception e) {
-        throw new IllegalArgumentException("Escolha inválida. Use 'Sim', 'Não', 1 ou 0.");
+        throw new ValidationException("Escolha inválida. Use 'Sim', 'Não', 1 ou 0.");
       }
     }
 
     if (!topicRepository.existsById(topicId)) {
-      throw new IllegalArgumentException("Tópico não encontrado.");
+      throw new NotFoundException("Tópico não encontrado.");
     }
 
     VotingSession session = votingSessionRepository.findMostRecentOpenByTopicId(topicId)
-      .orElseThrow(() -> new IllegalArgumentException("Nenhuma sessão de votação aberta e não expirada encontrada para o tópico."));
+      .orElseThrow(() -> new NotFoundException("Nenhuma sessão de votação aberta e não expirada encontrada para o tópico."));
 
     if (!session.getStatus().name().equals("OPEN") || session.isExpired()) {
-      throw new IllegalArgumentException("Sessão de votação não está aberta ou já expirou.");
+      throw new BusinessException("Sessão de votação não está aberta ou já expirou.");
     }
 
     if (voteRepository.findByTopicIdAndAssociateId(topicId, associateId).isPresent()) {
-      throw new IllegalArgumentException("Associado já votou neste tópico.");
+      throw new BusinessException("Associado já votou neste tópico.");
     }
 
     if (choice != 0 && choice != 1) {
-      throw new IllegalArgumentException("Escolha inválida. Use 1 para SIM ou 0 para NÃO.");
+      throw new ValidationException("Escolha inválida. Use 1 para SIM ou 0 para NÃO.");
     }
 
     Vote vote = new Vote(topicId, associateId, choice);

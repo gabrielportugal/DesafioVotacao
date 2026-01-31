@@ -1,0 +1,69 @@
+package com.sicradi.votacao;
+
+import com.sicradi.votacao.interfaces.rest.v1.TopicController;
+import com.sicradi.votacao.interfaces.rest.v1.VotingSessionController;
+import com.sicradi.votacao.utils.TestDatabaseCleaner;
+import com.sicradi.votacao.interfaces.rest.v1.VoteController;
+import com.sicradi.votacao.interfaces.rest.dto.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.http.ResponseEntity;
+import org.junit.jupiter.api.AfterEach;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@ActiveProfiles("test")
+class RegisterVoteUseCaseTest {
+
+    @Autowired
+    private TopicController topicController;
+    @Autowired
+    private VotingSessionController votingSessionController;
+    @Autowired
+    private VoteController voteController;
+
+    @Autowired
+    private TestDatabaseCleaner testDatabaseCleaner;
+
+    @AfterEach
+    void cleanDatabaseAfterEach() {
+        testDatabaseCleaner.cleanDatabase();
+        System.out.println("\uD83E\uDEB9 Banco de dados limpo após o teste");
+    }
+
+    @Test
+    void deveRegistrarVotoComSucesso() {
+        // Cria um tópico
+        TopicRequest topicRequest = new TopicRequest();
+        topicRequest.setTitle("Pauta Voto");
+        topicRequest.setDescription("Descrição da pauta para voto");
+        ResponseEntity<TopicResponse> topicResponse = topicController.createTopic(topicRequest);
+        assertThat(topicResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        TopicResponse topic = topicResponse.getBody();
+        assertThat(topic).isNotNull();
+        // Abre sessão
+        VotingSessionRequest sessionRequest = new VotingSessionRequest();
+        sessionRequest.setTopicId(topic.getId());
+        sessionRequest.setDuration(1);
+        ResponseEntity<VotingSessionResponse> sessionResponse = votingSessionController.openSession(sessionRequest);
+        assertThat(sessionResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        VotingSessionResponse session = sessionResponse.getBody();
+        assertThat(session).isNotNull();
+        // Registra voto
+        VoteRequest voteRequest = new VoteRequest();
+        voteRequest.setTopicId(topic.getId());
+        voteRequest.setAssociateId("12345678901");
+        voteRequest.setChoice("Sim");
+        ResponseEntity<VoteResponse> voteResponse = voteController.registerVote(voteRequest);
+        assertThat(voteResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        VoteResponse vote = voteResponse.getBody();
+        assertThat(vote).isNotNull();
+        assertThat(vote.getTopicId()).isEqualTo(topic.getId());
+        assertThat(vote.getAssociateId()).isEqualTo("12345678901");
+        assertThat(vote.getChoice()).isEqualTo(1);
+        assertThat(vote.getId()).isNotNull();
+    }
+}

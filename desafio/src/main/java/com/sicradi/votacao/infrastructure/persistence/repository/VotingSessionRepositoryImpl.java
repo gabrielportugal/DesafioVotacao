@@ -62,4 +62,9 @@ public class VotingSessionRepositoryImpl implements VotingSessionRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteAll() {
+        jpaRepository.deleteAll();
+    }
+
 }

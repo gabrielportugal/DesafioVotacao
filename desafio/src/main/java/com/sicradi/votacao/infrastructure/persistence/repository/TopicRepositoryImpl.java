@@ -47,4 +47,9 @@ public class TopicRepositoryImpl implements TopicRepository {
         return topicRepositoryJpa.existsById(id);
     }
 
+    @Override
+    public void deleteAll() {
+        topicRepositoryJpa.deleteAll();
+    }
+
 }

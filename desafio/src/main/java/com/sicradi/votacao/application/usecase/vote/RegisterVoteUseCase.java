@@ -40,7 +40,7 @@ public class RegisterVoteUseCase {
 
         VotingSession votingSession = votingSessionRepository.findMostRecentOpenByTopicId(topicId)
             .map(checkAndCloseVotingSessionUseCase::checkAndCloseIfExpired)
-            .orElseThrow(() -> new NotFoundException("Nenhuma sessão de votação aberta e não expirada encontrada para o tópico."));
+            .orElseThrow(() -> new BusinessException("Sessão de votação não está aberta ou já expirou."));
         if (votingSession.isExpired() || votingSession.getStatus() != VotingSessionStatus.OPEN) {
             throw new BusinessException("Sessão de votação não está aberta ou já expirou.");
         }

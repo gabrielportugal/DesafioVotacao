@@ -38,4 +38,9 @@ public class VoteRepositoryImpl implements VoteRepository {
                 .map(VoteEntityMapper::toDomain);
     }
 
+    @Override
+    public void deleteAll() {
+        voteJpaRepository.deleteAll();
+    }
+
 }

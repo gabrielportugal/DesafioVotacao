@@ -14,5 +14,6 @@ public interface VotingSessionRepository {
     void deleteById(Long id);
     boolean existsById(Long id);
     List<VotingSession> findByTopicId(Long topicId);
+    void deleteAll();
     
 }

@@ -11,5 +11,6 @@ public interface TopicRepository {
     Topic save(Topic topic);
     void deleteById(Long id);
     boolean existsById(Long id);
+    void deleteAll();
 
 }

@@ -10,5 +10,6 @@ public interface VoteRepository {
     Vote save(Vote vote);
     Optional<Vote> findByTopicIdAndAssociateId(Long topicId, String associateId);
     List<Vote> findAllByTopicId(Long topicId);
+    void deleteAll();
 
 }

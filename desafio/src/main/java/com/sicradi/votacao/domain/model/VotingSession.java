@@ -19,6 +19,7 @@ public class VotingSession {
     private LocalDateTime createdAt;
     private Integer duration; // minutos
     private LocalDateTime closedAt;
+    private String closedBy;
     private VotingSessionStatus status;
     private LocalDateTime updatedAt;
 

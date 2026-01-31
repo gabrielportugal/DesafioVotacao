@@ -11,6 +11,7 @@ public class VotingSessionMapper {
         session.setId(entity.getId());
         session.setCreatedAt(entity.getCreatedAt());
         session.setClosedAt(entity.getClosedAt());
+        session.setClosedBy(entity.getClosedBy());
         session.setStatus(entity.getStatus());
         session.setUpdatedAt(entity.getUpdatedAt());
         return session;
@@ -24,6 +25,7 @@ public class VotingSessionMapper {
         entity.setCreatedAt(session.getCreatedAt());
         entity.setDuration(session.getDuration());
         entity.setClosedAt(session.getClosedAt());
+        entity.setClosedBy(session.getClosedBy());
         entity.setStatus(session.getStatus());
         entity.setUpdatedAt(session.getUpdatedAt());
         return entity;

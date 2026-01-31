@@ -32,6 +32,48 @@ A solução segue uma arquitetura DDD Light + Clean Architecture, promovendo boa
 - Migrações: Flyway
 - Arquitetura: DDD Light + Clean Architecture
 
+## Versionamento da API
+### Estratégia de Versionamento
+A aplicação utiliza versionamento de API por URL, seguindo o padrão:
+```
+/api/v1/recursos
+```
+A versão da API é definida de forma centralizada por configuração, permitindo a evolução para novas versões sem necessidade de alterar o código dos controllers.
+
+### Configuração Centralizada
+A versão da API é definida no arquivo:
+```
+desafio/src/main/resources/infrastructure/configuration/api-version.yml
+```
+
+Exemplo:
+
+```
+api:
+  version: v1
+```
+
+### Como funciona
+
+- O path base dos endpoints é montado dinamicamente usando a configuração de versão.
+- Para alterar a versão, basta atualizar a propriedade `api.version` no arquivo de configuração.
+- Os controllers não possuem a versão hardcoded, garantindo fácil manutenção e evolução.
+- Para criar uma nova versão (ex: v2), basta criar novos controllers em `interfaces.rest.v2`.
+- As regras de negócio e repositórios são reutilizados entre versões, mantendo apenas a camada de interface separada.
+
+### Exemplo de endpoint versionado
+
+```
+GET /api/v1/topics
+```
+
+### Evolução para novas versões
+
+- Crie um novo pacote `interfaces.rest.v2` e adicione controllers específicos para a nova versão.
+- Mantenha compatibilidade com versões anteriores, não quebrando contratos existentes.
+- Não duplique regras de negócio ou implementações de repositório.
+- Controllers devem permanecer finos, sem lógica de negócio.
+
 ## 🧠 Arquitetura
 O uso da arquitetura DDD Light + Clean Architecture permite organizar o projeto com foco no domínio do negócio, mantendo o código desacoplado de frameworks e detalhes técnicos. Essa abordagem facilita a manutenção, a evolução do sistema e os testes, além de tornar as regras de negócio mais claras, reutilizáveis e protegidas contra mudanças em tecnologias externas. Abaixo é apresentada a estrutura de pastas do projeto, refletindo essa organização arquitetural.
 

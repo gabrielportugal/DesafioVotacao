@@ -1,4 +1,4 @@
-package com.sicradi.votacao.interfaces.rest.controller;
+package com.sicradi.votacao.interfaces.rest.v1;
 
 import com.sicradi.votacao.application.usecase.vote.RegisterVoteUseCase;
 import com.sicradi.votacao.interfaces.rest.dto.VoteRequest;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/votes")
+@RequestMapping("${api.base-path}/votes")
 public class VoteController {
     private final RegisterVoteUseCase registerVoteUseCase;
     private final com.sicradi.votacao.domain.repository.VoteRepository voteRepository;

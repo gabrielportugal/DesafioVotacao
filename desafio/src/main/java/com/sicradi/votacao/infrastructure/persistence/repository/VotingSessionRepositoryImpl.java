@@ -52,4 +52,12 @@ public class VotingSessionRepositoryImpl implements VotingSessionRepository {
     public boolean existsById(Long id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public List<VotingSession> findByTopicId(Long topicId) {
+        return jpaRepository.findByTopicId(topicId)
+                .stream()
+                .map(VotingSessionMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }

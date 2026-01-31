@@ -1,6 +1,6 @@
 package com.sicradi.votacao;
 
-import com.sicradi.votacao.interfaces.rest.controller.TopicController;
+import com.sicradi.votacao.interfaces.rest.v1.TopicController;
 import com.sicradi.votacao.interfaces.rest.dto.TopicRequest;
 import com.sicradi.votacao.interfaces.rest.dto.TopicResponse;
 import org.junit.jupiter.api.Test;

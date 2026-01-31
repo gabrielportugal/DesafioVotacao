@@ -1,4 +1,4 @@
-package com.sicradi.votacao.interfaces.rest.controller;
+package com.sicradi.votacao.interfaces.rest.v1;
 
 import com.sicradi.votacao.application.usecase.votingsession.OpenVotingSessionUseCase;
 import com.sicradi.votacao.interfaces.rest.dto.VotingSessionRequest;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/voting-session")
+@RequestMapping("${api.base-path}/voting-session")
 public class VotingSessionController {
     private final OpenVotingSessionUseCase openVotingSessionUseCase;
 

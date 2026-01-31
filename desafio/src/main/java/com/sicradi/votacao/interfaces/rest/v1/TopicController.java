@@ -1,9 +1,10 @@
-package com.sicradi.votacao.interfaces.rest.controller;
+package com.sicradi.votacao.interfaces.rest.v1;
 
 import com.sicradi.votacao.application.usecase.topic.CreateTopicUseCase;
 import com.sicradi.votacao.application.usecase.topic.DeleteTopicUseCase;
 import com.sicradi.votacao.application.usecase.topic.GetAllTopicsUseCase;
 import com.sicradi.votacao.application.usecase.topic.GetTopicByIdUseCase;
+import com.sicradi.votacao.application.usecase.topic.GetTopicWithVotingSessionsUseCase;
 import com.sicradi.votacao.application.usecase.topic.GetVoteResultUseCase;
 import com.sicradi.votacao.interfaces.rest.dto.*;
 import com.sicradi.votacao.interfaces.rest.mapper.TopicMapper;
@@ -14,11 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/topic")
+@RequestMapping("${api.base-path}/topic")
 public class TopicController {
     private final CreateTopicUseCase createTopicUseCase;
     private final GetAllTopicsUseCase getAllTopicsUseCase;
     private final GetTopicByIdUseCase getTopicByIdUseCase;
+    private final GetTopicWithVotingSessionsUseCase getTopicWithVotingSessionsUseCase;
     private final DeleteTopicUseCase deleteTopicUseCase;
     private final GetVoteResultUseCase getVoteResultUseCase;
 
@@ -26,12 +28,14 @@ public class TopicController {
                           GetAllTopicsUseCase getAllTopicsUseCase,
                           GetTopicByIdUseCase getTopicByIdUseCase,
                           DeleteTopicUseCase deleteTopicUseCase,
-                          GetVoteResultUseCase getVoteResultUseCase) {
+                          GetVoteResultUseCase getVoteResultUseCase,
+                          GetTopicWithVotingSessionsUseCase getTopicWithVotingSessionsUseCase) {
         this.createTopicUseCase = createTopicUseCase;
         this.getAllTopicsUseCase = getAllTopicsUseCase;
         this.getTopicByIdUseCase = getTopicByIdUseCase;
         this.deleteTopicUseCase = deleteTopicUseCase;
         this.getVoteResultUseCase = getVoteResultUseCase;
+        this.getTopicWithVotingSessionsUseCase = getTopicWithVotingSessionsUseCase;
     }
 
     @PostMapping
@@ -49,9 +53,9 @@ public class TopicController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TopicResponse> getTopicById(@PathVariable Long id) {
-        Topic topic = getTopicByIdUseCase.execute(id);
-        return ResponseEntity.ok(TopicMapper.toResponse(topic));
+    public ResponseEntity<TopicAndVotingSession> getTopicById(@PathVariable Long id) {
+        TopicAndVotingSession response = getTopicWithVotingSessionsUseCase.execute(id);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

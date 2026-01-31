@@ -130,20 +130,19 @@ git clone https://github.com/<seu-usuario>/DesafioVotacao.git
 cd DesafioVotacao
 ```
 
-Configurar banco em `application.yml`:
+### 🗄️ Configuração do banco de dados
+É obrigatório configurar os arquivos de propriedades tanto do ambiente **main** quanto **test**.
 
-```yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/votingdb
-    username: postgres
-    password: senha
-  jpa:
-    hibernate:
-      ddl-auto: update
+```sql
+CREATE DATABASE votingdb;
+CREATE DATABASE votingdb_test;
 ```
 
-Executar:
+⚠️ Importante
+O Spring não cria o banco de dados automaticamente.
+É necessário criar manualmente os bancos com os mesmos nomes definidos nos arquivos de configuração.
+
+### Executar:
 
 ```bash
 ./mvnw spring-boot:run

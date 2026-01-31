@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("${api.base-path}/topic")
 public class TopicController {
+
     private final CreateTopicUseCase createTopicUseCase;
     private final GetAllTopicsUseCase getAllTopicsUseCase;
     private final GetTopicByIdUseCase getTopicByIdUseCase;
@@ -25,11 +26,11 @@ public class TopicController {
     private final GetVoteResultUseCase getVoteResultUseCase;
 
     public TopicController(CreateTopicUseCase createTopicUseCase,
-                          GetAllTopicsUseCase getAllTopicsUseCase,
-                          GetTopicByIdUseCase getTopicByIdUseCase,
-                          DeleteTopicUseCase deleteTopicUseCase,
-                          GetVoteResultUseCase getVoteResultUseCase,
-                          GetTopicWithVotingSessionsUseCase getTopicWithVotingSessionsUseCase) {
+            GetAllTopicsUseCase getAllTopicsUseCase,
+            GetTopicByIdUseCase getTopicByIdUseCase,
+            DeleteTopicUseCase deleteTopicUseCase,
+            GetVoteResultUseCase getVoteResultUseCase,
+            GetTopicWithVotingSessionsUseCase getTopicWithVotingSessionsUseCase) {
         this.createTopicUseCase = createTopicUseCase;
         this.getAllTopicsUseCase = getAllTopicsUseCase;
         this.getTopicByIdUseCase = getTopicByIdUseCase;
@@ -69,4 +70,5 @@ public class TopicController {
         var response = getVoteResultUseCase.execute(topicId);
         return ResponseEntity.ok(response);
     }
+
 }

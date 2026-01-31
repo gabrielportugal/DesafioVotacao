@@ -1,0 +1,45 @@
+package com.sicradi.votacao.application.usecase.topic;
+
+import com.sicradi.votacao.domain.repository.TopicRepository;
+import com.sicradi.votacao.domain.repository.VotingSessionRepository;
+import com.sicradi.votacao.domain.repository.VoteRepository;
+import com.sicradi.votacao.application.usecase.votingsession.CloseAllVotingSessionByTopicId;
+import com.sicradi.votacao.application.usecase.votingsession.CloseVotingSessionUseCase;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class TopicUseCaseConfig {
+
+    @Bean
+    public CreateTopicUseCase createTopicUseCase(TopicRepository topicRepository) {
+        return new CreateTopicUseCase(topicRepository);
+    }
+
+    @Bean
+    public GetAllTopicsUseCase getAllTopicsUseCase(TopicRepository topicRepository) {
+        return new GetAllTopicsUseCase(topicRepository);
+    }
+
+    @Bean
+    public GetTopicByIdUseCase getTopicByIdUseCase(TopicRepository topicRepository) {
+        return new GetTopicByIdUseCase(topicRepository);
+    }
+
+    @Bean
+    public CloseAllVotingSessionByTopicId closeAllVotingSessionByTopicId(VotingSessionRepository votingSessionRepository, CloseVotingSessionUseCase closeVotingSessionUseCase) {
+        return new CloseAllVotingSessionByTopicId(votingSessionRepository, closeVotingSessionUseCase);
+    }
+
+    @Bean
+    public DeleteTopicUseCase deleteTopicUseCase(TopicRepository topicRepository, CloseAllVotingSessionByTopicId closeAllVotingSessionByTopicId) {
+        return new DeleteTopicUseCase(topicRepository, closeAllVotingSessionByTopicId);
+    }
+
+    @Bean
+    public GetVoteResultUseCase getVoteResultUseCase(VoteRepository voteRepository) {
+        return new GetVoteResultUseCase(voteRepository);
+    }
+
+}

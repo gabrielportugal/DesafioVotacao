@@ -1,22 +1,22 @@
 package com.sicradi.votacao.application.usecase.topic;
 
 import com.sicradi.votacao.domain.repository.TopicRepository;
-import com.sicradi.votacao.domain.repository.VotingSessionRepository;
 import com.sicradi.votacao.application.usecase.votingsession.CloseAllVotingSessionByTopicId;
 import com.sicradi.votacao.domain.model.Topic;
 import com.sicradi.votacao.domain.model.TopicStatus;
 import com.sicradi.votacao.exceptions.NotFoundException;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class DeleteTopicUseCase {
 
     private final TopicRepository topicRepository;
-    private final VotingSessionRepository votingSessionRepository;
     private final CloseAllVotingSessionByTopicId closeAllVotingSessionByTopicId;
 
-    public DeleteTopicUseCase(TopicRepository topicRepository, VotingSessionRepository votingSessionRepository) {
+    public DeleteTopicUseCase(TopicRepository topicRepository, CloseAllVotingSessionByTopicId closeAllVotingSessionByTopicId) {
         this.topicRepository = topicRepository;
-        this.votingSessionRepository = votingSessionRepository;
-        this.closeAllVotingSessionByTopicId = new CloseAllVotingSessionByTopicId(votingSessionRepository);
+        this.closeAllVotingSessionByTopicId = closeAllVotingSessionByTopicId;
     }
 
     public void execute(Long id) {
@@ -28,4 +28,5 @@ public class DeleteTopicUseCase {
         // Fechar todas as sessões de votação relacionadas
         closeAllVotingSessionByTopicId.execute(id);
     }
+
 }

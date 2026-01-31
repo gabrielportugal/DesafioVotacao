@@ -4,6 +4,7 @@ import com.sicradi.votacao.domain.model.Vote;
 import com.sicradi.votacao.interfaces.rest.dto.VoteResponse;
 
 public class VoteRestMapper {
+
     public static VoteResponse toResponse(Vote vote) {
         VoteResponse response = new VoteResponse();
         response.setId(vote.getId());
@@ -14,4 +15,5 @@ public class VoteRestMapper {
         response.setUpdatedAt(vote.getUpdatedAt());
         return response;
     }
+    
 }

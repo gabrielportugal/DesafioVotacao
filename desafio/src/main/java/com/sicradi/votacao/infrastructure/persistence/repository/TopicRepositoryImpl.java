@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 @Repository
 public class TopicRepositoryImpl implements TopicRepository {
-    private final TopicRepositoryJpa topicRepositoryJpa;
-
+    
     public TopicRepositoryImpl(TopicRepositoryJpa topicRepositoryJpa) {
         this.topicRepositoryJpa = topicRepositoryJpa;
     }
+    private final TopicRepositoryJpa topicRepositoryJpa;
 
     @Override
     public List<Topic> findAll() {
@@ -46,4 +46,5 @@ public class TopicRepositoryImpl implements TopicRepository {
     public boolean existsById(Long id) {
         return topicRepositoryJpa.existsById(id);
     }
+
 }

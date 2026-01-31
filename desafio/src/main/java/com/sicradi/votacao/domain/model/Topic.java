@@ -20,11 +20,17 @@ public class Topic {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Topic(String title, String description) {
-        this.title = title;
-        this.description = description;
-        this.status = TopicStatus.OPEN;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+    public static Topic create(String title, String description) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Título não pode ser vazio");
+        }
+        Topic topic = new Topic();
+        topic.title = title;
+        topic.description = description;
+        topic.status = TopicStatus.OPEN;
+        topic.createdAt = LocalDateTime.now();
+        topic.updatedAt = LocalDateTime.now();
+        return topic;
     }
+
 }

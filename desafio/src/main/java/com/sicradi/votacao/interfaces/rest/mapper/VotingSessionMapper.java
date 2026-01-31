@@ -4,6 +4,7 @@ import com.sicradi.votacao.domain.model.VotingSession;
 import com.sicradi.votacao.interfaces.rest.dto.VotingSessionResponse;
 
 public class VotingSessionMapper {
+
     public static VotingSessionResponse toResponse(VotingSession session) {
         VotingSessionResponse response = new VotingSessionResponse();
         response.setId(session.getId());
@@ -15,4 +16,5 @@ public class VotingSessionMapper {
         response.setUpdatedAt(session.getUpdatedAt());
         return response;
     }
+    
 }

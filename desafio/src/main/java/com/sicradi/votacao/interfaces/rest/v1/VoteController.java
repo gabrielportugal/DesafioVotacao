@@ -5,16 +5,19 @@ import com.sicradi.votacao.interfaces.rest.dto.VoteRequest;
 import com.sicradi.votacao.interfaces.rest.dto.VoteResponse;
 import com.sicradi.votacao.interfaces.rest.mapper.VoteRestMapper;
 import com.sicradi.votacao.domain.model.Vote;
+import com.sicradi.votacao.domain.repository.VoteRepository;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${api.base-path}/votes")
 public class VoteController {
-    private final RegisterVoteUseCase registerVoteUseCase;
-    private final com.sicradi.votacao.domain.repository.VoteRepository voteRepository;
 
-    public VoteController(RegisterVoteUseCase registerVoteUseCase, com.sicradi.votacao.domain.repository.VoteRepository voteRepository) {
+    private final RegisterVoteUseCase registerVoteUseCase;
+    private final VoteRepository voteRepository;
+
+    public VoteController(RegisterVoteUseCase registerVoteUseCase, VoteRepository voteRepository) {
         this.registerVoteUseCase = registerVoteUseCase;
         this.voteRepository = voteRepository;
     }
@@ -25,4 +28,5 @@ public class VoteController {
         VoteResponse response = VoteRestMapper.toResponse(vote);
         return ResponseEntity.ok(response);
     }
+
 }

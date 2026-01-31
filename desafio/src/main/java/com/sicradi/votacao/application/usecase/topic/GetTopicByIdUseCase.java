@@ -4,7 +4,11 @@ import com.sicradi.votacao.domain.model.Topic;
 import com.sicradi.votacao.domain.repository.TopicRepository;
 import com.sicradi.votacao.exceptions.NotFoundException;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class GetTopicByIdUseCase {
+
     private final TopicRepository topicRepository;
 
     public GetTopicByIdUseCase(TopicRepository topicRepository) {
@@ -15,4 +19,5 @@ public class GetTopicByIdUseCase {
         return topicRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Tópico não encontrado para o ID informado: " + id));
     }
+
 }

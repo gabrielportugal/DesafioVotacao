@@ -4,6 +4,7 @@ import com.sicradi.votacao.domain.model.Topic;
 import com.sicradi.votacao.interfaces.rest.dto.TopicResponse;
 
 public class TopicMapper {
+
     public static TopicResponse toResponse(Topic topic) {
         TopicResponse response = new TopicResponse();
         response.setId(topic.getId());
@@ -14,4 +15,5 @@ public class TopicMapper {
         response.setUpdatedAt(topic.getUpdatedAt());
         return response;
     }
+    
 }

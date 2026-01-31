@@ -4,6 +4,7 @@ import com.sicradi.votacao.domain.model.Vote;
 import com.sicradi.votacao.infrastructure.persistence.entity.VoteEntity;
 
 public class VoteEntityMapper {
+
     public static VoteEntity toEntity(Vote vote) {
         if (vote == null) return null;
         VoteEntity entity = new VoteEntity();
@@ -27,4 +28,5 @@ public class VoteEntityMapper {
         vote.setUpdatedAt(entity.getUpdatedAt());
         return vote;
     }
+
 }

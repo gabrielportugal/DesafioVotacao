@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.sicradi.votacao.exceptions.NotFoundException;
 
 public class CloseVotingSessionUseCase {
+
     private final VotingSessionRepository votingSessionRepository;
 
     public CloseVotingSessionUseCase(VotingSessionRepository votingSessionRepository) {
@@ -21,4 +22,5 @@ public class CloseVotingSessionUseCase {
         session.close();
         return votingSessionRepository.save(session);
     }
+
 }

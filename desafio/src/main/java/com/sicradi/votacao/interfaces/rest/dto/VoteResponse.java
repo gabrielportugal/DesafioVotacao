@@ -11,10 +11,12 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class VoteResponse {
+
     private Long id;
     private Long topicId;
     private String associateId;
     private Integer choice;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
 }

@@ -4,6 +4,7 @@ import com.sicradi.votacao.domain.model.Topic;
 import com.sicradi.votacao.infrastructure.persistence.entity.TopicEntity;
 
 public class TopicMapper {
+
     public static Topic toDomain(TopicEntity entity) {
         if (entity == null) return null;
         Topic topic = new Topic();
@@ -27,4 +28,5 @@ public class TopicMapper {
         entity.setUpdatedAt(topic.getUpdatedAt());
         return entity;
     }
+
 }

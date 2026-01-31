@@ -9,9 +9,11 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class VotingSessionDTO {
+
     private String status;
     private LocalDateTime createdAt;
     private Integer duration;
     private LocalDateTime closedAt;
     private String closedBy;
+    
 }

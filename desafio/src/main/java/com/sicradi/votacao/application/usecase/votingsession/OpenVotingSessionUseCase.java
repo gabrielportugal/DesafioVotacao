@@ -12,8 +12,8 @@ import com.sicradi.votacao.exceptions.ValidationException;
 import com.sicradi.votacao.exceptions.BusinessException;
 import com.sicradi.votacao.exceptions.NotFoundException;
 
-
 public class OpenVotingSessionUseCase {
+
     private final VotingSessionRepository votingSessionRepository;
     private final TopicRepository topicRepository;
 
@@ -30,23 +30,26 @@ public class OpenVotingSessionUseCase {
             throw new NotFoundException("Tópico não encontrado para o ID informado: " + topicId);
         }
 
-        // Só pode abrir se o tópico estiver com status OPEN
+        // Só pode abrir se o Topic (pauta) estiver com status OPEN
         Topic topic = topicRepository.findById(topicId)
             .orElseThrow(() -> new NotFoundException("Tópico não encontrado para o ID informado: " + topicId));
         if (!TopicStatus.OPEN.equals(topic.getStatus())) {
             throw new BusinessException("Só é possível abrir sessão para tópicos com status OPEN.");
         }
 
-        // Regra: só pode abrir se não houver sessão aberta ou expirada para o tópico
-        List<VotingSession> sessions = votingSessionRepository.findAll();
-        boolean hasOpenOrExpired = sessions.stream()
-            .filter(s -> s.getTopicId().equals(topicId))
-            .anyMatch(s -> VotingSessionStatus.OPEN.equals(s.getStatus()) || !s.isExpired());
-        if (hasOpenOrExpired) {
+        if (hasOpenOrUnexpiredSession(topicId)) {
             throw new BusinessException("Já existe uma sessão aberta.");
         }
 
         VotingSession session = new VotingSession(topicId, duration);
         return votingSessionRepository.save(session);
+    }
+
+    // Verifica se já existe sessão aberta ou não expirada para o tópico
+    private boolean hasOpenOrUnexpiredSession(Long topicId) {
+        List<VotingSession> sessions = votingSessionRepository.findAll();
+        return sessions.stream()
+            .filter(s -> s.getTopicId().equals(topicId))
+            .anyMatch(s -> VotingSessionStatus.OPEN.equals(s.getStatus()) || !s.isExpired());
     }
 }

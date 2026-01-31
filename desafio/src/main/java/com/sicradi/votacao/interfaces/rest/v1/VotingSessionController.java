@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("${api.base-path}/voting-session")
 public class VotingSessionController {
+
     private final OpenVotingSessionUseCase openVotingSessionUseCase;
 
     public VotingSessionController(OpenVotingSessionUseCase openVotingSessionUseCase) {
@@ -23,4 +24,5 @@ public class VotingSessionController {
         VotingSessionResponse response = VotingSessionMapper.toResponse(session);
         return ResponseEntity.ok(response);
     }
+    
 }

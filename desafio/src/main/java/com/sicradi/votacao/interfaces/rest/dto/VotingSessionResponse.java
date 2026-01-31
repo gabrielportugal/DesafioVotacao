@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class VotingSessionResponse {
+
     private Long id;
     private Long topicId;
     private Integer duration;
@@ -18,4 +19,5 @@ public class VotingSessionResponse {
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
     private LocalDateTime updatedAt;
+    
 }

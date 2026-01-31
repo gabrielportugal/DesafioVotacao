@@ -14,6 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VotingSession {
+
     private Long id;
     private Long topicId;
     private LocalDateTime createdAt;
@@ -55,4 +56,5 @@ public class VotingSession {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

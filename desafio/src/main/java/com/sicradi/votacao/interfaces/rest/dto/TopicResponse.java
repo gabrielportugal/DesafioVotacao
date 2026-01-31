@@ -11,10 +11,12 @@ import com.sicradi.votacao.domain.model.TopicStatus;
 @Setter
 @NoArgsConstructor
 public class TopicResponse {
+
     private Long id;
     private String title;
     private String description;
     private TopicStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
 }

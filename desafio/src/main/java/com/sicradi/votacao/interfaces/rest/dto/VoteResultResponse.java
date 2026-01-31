@@ -9,8 +9,10 @@ import lombok.AllArgsConstructor;
 @Setter
 @AllArgsConstructor
 public class VoteResultResponse {
+
     private long totalSim;
     private long totalNao;
     private double percentualSim;
     private double percentualNao;
+    
 }

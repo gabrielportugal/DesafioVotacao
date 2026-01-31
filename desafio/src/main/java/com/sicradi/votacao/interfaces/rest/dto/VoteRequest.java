@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Setter
 @NoArgsConstructor
 public class VoteRequest {
+
     private Long topicId;
     private String associateId;
     private String choice;
+    
 }

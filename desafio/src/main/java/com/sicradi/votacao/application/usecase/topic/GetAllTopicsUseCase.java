@@ -4,7 +4,11 @@ import com.sicradi.votacao.domain.model.Topic;
 import com.sicradi.votacao.domain.repository.TopicRepository;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class GetAllTopicsUseCase {
+
     private final TopicRepository topicRepository;
 
     public GetAllTopicsUseCase(TopicRepository topicRepository) {
@@ -14,4 +18,5 @@ public class GetAllTopicsUseCase {
     public List<Topic> execute() {
         return topicRepository.findAll();
     }
+
 }

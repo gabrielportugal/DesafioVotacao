@@ -10,13 +10,15 @@ import java.util.Optional;
 
 @Repository
 public class VoteRepositoryImpl implements VoteRepository {
-        @Override
-        public java.util.List<Vote> findAllByTopicId(Long topicId) {
-            return voteJpaRepository.findAllByTopicId(topicId)
-                    .stream()
-                    .map(VoteEntityMapper::toDomain)
-                    .collect(java.util.stream.Collectors.toList());
-        }
+
+    @Override
+    public java.util.List<Vote> findAllByTopicId(Long topicId) {
+        return voteJpaRepository.findAllByTopicId(topicId)
+                .stream()
+                .map(VoteEntityMapper::toDomain)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     private final VoteJpaRepository voteJpaRepository;
 
     public VoteRepositoryImpl(VoteJpaRepository voteJpaRepository) {
@@ -35,4 +37,5 @@ public class VoteRepositoryImpl implements VoteRepository {
         return voteJpaRepository.findByTopicIdAndAssociateId(topicId, associateId)
                 .map(VoteEntityMapper::toDomain);
     }
+
 }

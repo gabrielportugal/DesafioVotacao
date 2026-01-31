@@ -1,10 +1,10 @@
 package com.sicradi.votacao.infrastructure.persistence.mapper;
 
 import com.sicradi.votacao.domain.model.VotingSession;
-import com.sicradi.votacao.domain.model.VotingSessionStatus;
 import com.sicradi.votacao.infrastructure.persistence.entity.VotingSessionEntity;
 
 public class VotingSessionMapper {
+
     public static VotingSession toDomain(VotingSessionEntity entity) {
         if (entity == null) return null;
         VotingSession session = new VotingSession(entity.getTopicId(), entity.getDuration());
@@ -30,4 +30,5 @@ public class VotingSessionMapper {
         entity.setUpdatedAt(session.getUpdatedAt());
         return entity;
     }
+
 }

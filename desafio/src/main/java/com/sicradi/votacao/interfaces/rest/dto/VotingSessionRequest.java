@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Setter
 @NoArgsConstructor
 public class VotingSessionRequest {
+
     private Long topicId;
     private Integer duration;
+    
 }

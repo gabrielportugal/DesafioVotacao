@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class VotingSessionRepositoryImpl implements VotingSessionRepository {
+
     @Override
     public Optional<VotingSession> findMostRecentOpenByTopicId(Long topicId) {
         return jpaRepository.findOpenNotExpiredByTopicIdOrderByCreatedAtDesc(topicId)
@@ -60,4 +61,5 @@ public class VotingSessionRepositoryImpl implements VotingSessionRepository {
                 .map(VotingSessionMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
 }

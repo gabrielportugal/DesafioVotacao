@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Setter
 @NoArgsConstructor
 public class TopicRequest {
+
     private String title;
     private String description;
+    
 }

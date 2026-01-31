@@ -1,173 +1,138 @@
+
 # Desafio de Votação
 
-API REST para gerenciamento de pautas, sessões de votação e votos de associados, conforme requisitos do desafio técnico.
+## 📌 Visão Geral do Projeto
 
-## 📌 Descrição
-Este projeto implementa uma solução backend para sessões de votação cooperativa onde:
-- Cada associado pode votar uma vez por pauta (Sim/Não).
-- É possível abrir sessões de votação com tempo configurável.
-- A API expõe serviços REST para:
-    - cadastrar pautas;
-    - abrir sessões;
-    - registrar votos;
-    - consultar resultados.
+API REST para gerenciamento de pautas, sessões de votação e votos de associados, desenvolvida com foco em arquitetura limpa, robustez e clareza de regras de negócio. O sistema permite a abertura de pautas, criação de sessões de votação com duração configurável, registro de votos e consulta de resultados, seguindo requisitos técnicos e de negócio típicos de ambientes cooperativos.
 
-A solução segue uma arquitetura DDD Light + Clean Architecture, promovendo boa organização de código, separação de responsabilidades e facilidade de manutenção e evolução.
+---
 
-## 🚀 Funcionalidades
-- Criar pauta
-- Abrir sessão de votação (tempo configurável)
-- Receber votos de associados (YES / NO)
-- Contabilizar votos e devolver resultado
-- Cada associado pode votar apenas uma vez por pauta
-- Sessões expiram automaticamente pelo tempo definido
-- Documentação de API via OpenAPI/Swagger
-- Métricas e observabilidade com Spring Boot Actuator
+## 🏗️ Arquitetura e Organização
 
-## 🧱 Tecnologias e Ferramentas
-- Linguagen: Java 17
-- Framework: Spring Boot
-- Persistência: PostgreSQL
-- Migrações: Flyway
-- Arquitetura: DDD Light + Clean Architecture
+O projeto adota DDD Light, Clean Architecture e princípios SOLID, promovendo separação clara de responsabilidades, baixo acoplamento e alta coesão. As camadas são organizadas conforme abaixo:
 
-## Versionamento de Branches
-O projeto adota uma estratégia de versionamento de branches baseada no **Git Flow**, utilizando a **branch main** para código estável e pronto para produção, a **branch develop** como base para o desenvolvimento contínuo de novas funcionalidades e melhorias, e branches no formato **release/x.x** para estabilização, ajustes finais e preparação de versões antes do merge definitivo na **main**, garantindo organização, controle de versões e segurança no processo de entrega.
+- **Domain:** Entidades e regras de negócio puras, sem dependências técnicas.
+- **Application:** Casos de uso que orquestram operações e persistência, sem lógica de domínio.
+- **Infrastructure:** Implementação de persistência (JPA, repositórios), controllers REST e mapeamentos.
+- **Interface:** Controllers REST, DTOs e mappers para adaptação entre camadas.
 
-## Versionamento da API
-### Estratégia de Versionamento
-A aplicação utiliza versionamento de API por URL, seguindo o padrão:
-```
-/api/v1/recursos
-```
-A versão da API é definida de forma centralizada por configuração, permitindo a evolução para novas versões sem necessidade de alterar o código dos controllers.
-
-### Configuração Centralizada
-A versão da API é definida no arquivo:
-```
-desafio/src/main/resources/infrastructure/configuration/api-version.yml
-```
-
-Exemplo:
-
-```
-api:
-  version: v1
-```
-
-### Como funciona
-
-- O path base dos endpoints é montado dinamicamente usando a configuração de versão.
-- Para alterar a versão, basta atualizar a propriedade `api.version` no arquivo de configuração.
-- Os controllers não possuem a versão hardcoded, garantindo fácil manutenção e evolução.
-- Para criar uma nova versão (ex: v2), basta criar novos controllers em `interfaces.rest.v2`.
-- As regras de negócio e repositórios são reutilizados entre versões, mantendo apenas a camada de interface separada.
-
-### Exemplo de endpoint versionado
-
-```
-GET /api/v1/topics
-```
-
-### Evolução para novas versões
-
-- Crie um novo pacote `interfaces.rest.v2` e adicione controllers específicos para a nova versão.
-- Mantenha compatibilidade com versões anteriores, não quebrando contratos existentes.
-- Não duplique regras de negócio ou implementações de repositório.
-- Controllers devem permanecer finos, sem lógica de negócio.
-
-## 🧠 Arquitetura
-O uso da arquitetura DDD Light + Clean Architecture permite organizar o projeto com foco no domínio do negócio, mantendo o código desacoplado de frameworks e detalhes técnicos. Essa abordagem facilita a manutenção, a evolução do sistema e os testes, além de tornar as regras de negócio mais claras, reutilizáveis e protegidas contra mudanças em tecnologias externas. Abaixo é apresentada a estrutura de pastas do projeto, refletindo essa organização arquitetural.
+### 🧩 Estrutura de Pastas
 
 ```text
 src/main/java/com/sicredi/votacao
 ├── application
-│ └── usecase
+│   └── usecase
 ├── domain
-│ ├── model
-│ ├── repository
+│   ├── model
+│   └── repository
 ├── exceptions
 ├── infrastructure
-│ ├── persistence
-│ │ ├── entity
-│ │ ├── repository
-│ │ └── mapper
-│ └── configuration
+│   ├── persistence
+│   │   ├── entity
+│   │   ├── repository
+│   │   └── mapper
+│   └── configuration
 ├── interface
-│ └── rest
-│   ├── controller
-│   ├── dto
-│   └── mapper
+│   └── rest
+│       ├── controller
+│       ├── dto
+│       └── mapper
 └── VotacaoApplication.java
 ```
 
-### 📚 Camadas
-- **application**  
-  Contém os casos de uso da aplicação e coordena o fluxo entre domínio e infraestrutura. Não possui regras de negócio, apenas orquestra ações.
+---
 
-- **domain**  
-  Representa o núcleo do negócio com entidades, regras e contratos. Não depende de frameworks ou detalhes técnicos.
+## 🧠 Regras de Negócio
 
-- **exceptions**  
-  Centraliza exceções de negócio e de aplicação. Facilita o tratamento consistente de erros.
+- **Abertura de Pautas:** Toda pauta é criada com estado inicial `OPEN`.
+- **Criação de Sessões de Votação:** Sessões são sempre vinculadas a uma pauta existente.
+- **Duração Configurável:** A duração da sessão é definida na criação, com valor padrão aplicado se não informado.
+- **Expiração de Sessão:** Determinada por `createdAt + duration` (minutos).
+- **Validação de Expiração:** O método de domínio `isExpired()` é usado apenas para validação, sem persistência.
+- **Fechamento Centralizado:** O status (`OPEN` → `CLOSED`) e o campo `closedAt` são atualizados exclusivamente pelo caso de uso `CheckAndCloseVotingSessionUseCase`.
+- **Fechamento Sob Demanda:** Não há schedulers, threads ou jobs em background; o fechamento ocorre sob demanda, sempre que a sessão é lida ou utilizada.
+- **Consistência Garantida:** Toda operação de leitura ou uso de sessão passa pelo caso de uso de verificação e fechamento, garantindo estado consistente.
+- **Remoção de closedBy:** O campo foi removido por não fazer parte da regra de negócio.
+- **Uso de Mappers:** Conversão entre entidades de domínio, JPA e DTOs é feita por mappers dedicados.
 
-- **infrastructure**  
-  Implementa detalhes técnicos como banco de dados, JPA e configurações do Spring. Pode mudar sem afetar o domínio.
+---
 
-- **interface**  
-  Define os pontos de entrada da aplicação, como controllers REST e DTOs. Apenas adapta dados entre o mundo externo e a aplicação.
+## 🔀 Fluxo Principal da Aplicação
 
-  # Regras de Negócio e Decisões Arquiteturais
+1. Cadastro de pauta (`Topic`) com estado inicial `OPEN`.
+2. Criação de sessão de votação (`VotingSession`) vinculada à pauta, com duração definida.
+3. Registro de votos por associados, respeitando unicidade por pauta.
+4. Consulta de resultados e sessões, sempre garantindo consistência do estado via verificação sob demanda.
 
-### Regras de Negócio Implementadas
+---
 
-- **Abertura de Pautas (Topic):** Toda pauta é criada com estado inicial `OPEN`, permitindo o início imediato de sessões de votação vinculadas.
-- **Criação de Sessões de Votação (VotingSession):** Sessões são sempre associadas a uma pauta existente, garantindo integridade referencial.
-- **Duração Configurável:** A duração da sessão de votação é definida no momento da criação. Caso não seja informada, um valor padrão é aplicado automaticamente.
-- **Expiração de Sessão:** A expiração é determinada por `createdAt + duration` (em minutos). Após esse período, a sessão não permite novos votos.
-- **Validação de Expiração:** O método de domínio `isExpired()` é utilizado exclusivamente para validação de regra de negócio, sem realizar persistência ou efeitos colaterais.
-- **Centralização do Fechamento:** A atualização do status da sessão (`OPEN` → `CLOSED`) e o registro do `closedAt` são realizados exclusivamente pelo caso de uso `CheckAndCloseVotingSessionUseCase`, garantindo consistência e evitando duplicidade de lógica.
-- **Fechamento Sob Demanda (Lazy Evaluation):** Não há uso de schedulers, threads ou jobs em background. O fechamento ocorre sob demanda: ao acessar ou utilizar uma sessão, o sistema verifica e atualiza seu estado conforme necessário.
-- **Consistência Garantida:** Toda leitura ou uso de sessão de votação (consultas, validações, votação, etc.) obrigatoriamente passa pelo `CheckAndCloseVotingSessionUseCase`, assegurando que o estado retornado sempre reflita a situação real (aberta ou fechada).
-- **Remoção de closedBy:** O campo `closedBy` foi removido da entidade e da tabela, pois não faz parte das regras de negócio do domínio.
-
-### Decisões Arquiteturais
-
-- **Separação de Camadas:**
-  - *Domínio:* Contém entidades e regras de negócio puras, sem dependências técnicas.
-  - *Application:* Implementa casos de uso, orquestrando operações e persistência, sem lógica de domínio.
-  - *Infrastructure:* Responsável por persistência (JPA, repositórios), controllers REST e mapeamentos.
-- **Uso de Mappers:** Conversão entre entidades de domínio, entidades JPA e DTOs é realizada por mappers dedicados, promovendo baixo acoplamento e clareza.
-- **Princípios de DDD Light, Clean Architecture e SOLID:**
-  - O domínio é isolado e protegido de detalhes técnicos.
-  - Casos de uso centralizam regras de aplicação e persistência.
-  - Controllers e infraestrutura apenas adaptam dados e delegam operações.
-  - O projeto favorece baixo acoplamento, alta coesão e facilidade de testes.
-
-Essas decisões garantem que o sistema seja robusto, consistente e de fácil manutenção, alinhado com as melhores práticas de arquitetura backend.
-
-## Estratégia de Fechamento de Sessões
+## 🔁 Estratégias de Atualização e Consistência de Dados
 
 A aplicação utiliza uma estratégia de atualização sob demanda para o fechamento de sessões de votação. Em vez de empregar threads, schedulers ou jobs em background, toda operação de leitura ou uso de uma sessão (como consultas, votação ou obtenção de tópicos) passa por um caso de uso responsável por validar se a sessão expirou. Caso a expiração seja detectada, a sessão é automaticamente fechada e persistida antes de ser retornada.
 
 Essa abordagem é semelhante à utilizada por grandes portais como [Portfólio](https://g1.globo.com/) e [Portal Multiplix](https://www.portalmultiplix.com/) , onde o estado mais recente é atualizado no momento do primeiro acesso, garantindo consistência, simplicidade operacional e menor custo de infraestrutura. Assim, o sistema permanece sempre atualizado sem a complexidade de processos assíncronos contínuos.
 
-## 🛠️ Como rodar localmente
+---
+
+## 🧪 Testes
+
+- Testes automatizados cobrem casos de uso, regras de negócio e integração.
+- Recomenda-se rodar os testes via Maven para garantir a integridade do sistema antes de qualquer entrega.
+
+```bash
+mvn test
+```
+
+---
+
+
+
+## 🌱 Versionamento de API
+
+- Versionamento por URL, configurado centralizadamente (desafio/src/main/resources/infrastructure/configuration/api-version.yml).
+- Exemplo de URL: `/api/v1/topics`
+- Nova versão: criar controllers em `interfaces.rest.v2` e atualizar configuração.
+- Controllers não possuem versão hardcoded, facilitando evolução.
+
+---
+
+## 🌿 Estratégia de Branches (Git)
+
+- **main:** Produção estável.
+- **develop:** Desenvolvimento contínuo.
+- **release/x.x:** Estabilização e preparação de versões.
+- Estratégia baseada em Git Flow, garantindo organização e controle de entregas.
+
+---
+
+## ⚙️ Tecnologias Utilizadas
+
+- Java 17
+- Spring Boot
+- PostgreSQL
+- Flyway
+- Swagger/OpenAPI
+
+---
+
+## ▶️ Como Executar o Projeto
 
 ### Pré-requisitos
-- JDK 17 instalado
+
+- JDK 17
 - Maven
 - PostgreSQL
 
 ### Passos
+
 ```bash
 git clone https://github.com/<seu-usuario>/DesafioVotacao.git
 cd DesafioVotacao
 ```
 
-Configurar banco em application.yml:
+Configurar banco em `application.yml`:
 
-```bash
+```yaml
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/votingdb
@@ -181,15 +146,16 @@ spring:
 Executar:
 
 ```bash
-.\mvnw.cmd spring-boot:run
+./mvnw spring-boot:run
 ```
 
-A API estará disponível em:
-```bash
-http://localhost:8080/api/v1
-```
+A API estará disponível em:  
+`http://localhost:8080/api/v1`
 
-## Autor
+---
+
+## 👤 Autor
+
 **Gabriel Portugal**  
 💼 [Portfólio](https://gabrielportugal.web.app/)  
 💻 [LinkedIn](https://www.linkedin.com/in/gabriel-portugal-b26a13188/)

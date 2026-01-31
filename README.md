@@ -32,6 +32,9 @@ A solução segue uma arquitetura DDD Light + Clean Architecture, promovendo boa
 - Migrações: Flyway
 - Arquitetura: DDD Light + Clean Architecture
 
+## Versionamento de Branches
+O projeto adota uma estratégia de versionamento de branches baseada no **Git Flow**, utilizando a **branch main** para código estável e pronto para produção, a **branch develop** como base para o desenvolvimento contínuo de novas funcionalidades e melhorias, e branches no formato **release/x.x** para estabilização, ajustes finais e preparação de versões antes do merge definitivo na **main**, garantindo organização, controle de versões e segurança no processo de entrega.
+
 ## Versionamento da API
 ### Estratégia de Versionamento
 A aplicação utiliza versionamento de API por URL, seguindo o padrão:

@@ -1,4 +1,4 @@
-package com.sicradi.votacao.application.usecase;
+package com.sicradi.votacao.application.usecase.topic;
 
 import com.sicradi.votacao.domain.repository.TopicRepository;
 import com.sicradi.votacao.exceptions.ResourceNotFoundException;

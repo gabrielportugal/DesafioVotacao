@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     body.put("message", ex.getMessage());
     return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
   }
-  
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
     Map<String, Object> body = new LinkedHashMap<>();
@@ -30,5 +30,35 @@ public class GlobalExceptionHandler {
     body.put("error", "Internal Server Error");
     body.put("message", ex.getMessage());
     return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(TopicIdRequiredException.class)
+  public ResponseEntity<Map<String, Object>> handleTopicIdRequiredException(TopicIdRequiredException ex) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.BAD_REQUEST.value());
+    body.put("error", "Topic ID Required");
+    body.put("message", ex.getMessage());
+    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(TopicNotFoundException.class)
+  public ResponseEntity<Map<String, Object>> handleTopicNotFoundException(TopicNotFoundException ex) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.NOT_FOUND.value());
+    body.put("error", "Topic Not Found");
+    body.put("message", ex.getMessage());
+    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(VotingSessionNotFoundException.class)
+  public ResponseEntity<Map<String, Object>> handleVotingSessionNotFoundException(VotingSessionNotFoundException ex) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.NOT_FOUND.value());
+    body.put("error", "Voting Session Not Found");
+    body.put("message", ex.getMessage());
+    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
   }
 }

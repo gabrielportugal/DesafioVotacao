@@ -1,11 +1,11 @@
-package com.sicradi.votacao.application.usecase;
+package com.sicradi.votacao.application.usecase.topic;
 
 import com.sicradi.votacao.domain.repository.TopicRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class UseCaseConfig {
+public class UseCaseConfigTopic {
     @Bean
     public CreateTopicUseCase createTopicUseCase(TopicRepository topicRepository) {
         return new CreateTopicUseCase(topicRepository);

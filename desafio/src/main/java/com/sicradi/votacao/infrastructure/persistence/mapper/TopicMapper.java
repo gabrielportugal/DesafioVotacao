@@ -10,7 +10,7 @@ public class TopicMapper {
         topic.setId(entity.getId());
         topic.setTitle(entity.getTitle());
         topic.setDescription(entity.getDescription());
-        topic.setStatus(entity.getStatus());
+        topic.setStatus(entity.getStatus() == null ? null : com.sicradi.votacao.domain.model.TopicStatus.valueOf(entity.getStatus()));
         topic.setCreatedAt(entity.getCreatedAt());
         topic.setUpdatedAt(entity.getUpdatedAt());
         return topic;
@@ -22,7 +22,7 @@ public class TopicMapper {
         entity.setId(topic.getId());
         entity.setTitle(topic.getTitle());
         entity.setDescription(topic.getDescription());
-        entity.setStatus(topic.getStatus());
+        entity.setStatus(topic.getStatus() == null ? null : topic.getStatus().name());
         entity.setCreatedAt(topic.getCreatedAt());
         entity.setUpdatedAt(topic.getUpdatedAt());
         return entity;

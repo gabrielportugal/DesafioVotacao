@@ -4,6 +4,7 @@ import com.sicradi.votacao.application.usecase.topic.CreateTopicUseCase;
 import com.sicradi.votacao.application.usecase.topic.DeleteTopicUseCase;
 import com.sicradi.votacao.application.usecase.topic.GetAllTopicsUseCase;
 import com.sicradi.votacao.application.usecase.topic.GetTopicByIdUseCase;
+import com.sicradi.votacao.application.usecase.topic.GetVoteResultUseCase;
 import com.sicradi.votacao.interfaces.rest.dto.*;
 import com.sicradi.votacao.interfaces.rest.mapper.TopicMapper;
 import com.sicradi.votacao.domain.model.Topic;
@@ -19,15 +20,18 @@ public class TopicController {
     private final GetAllTopicsUseCase getAllTopicsUseCase;
     private final GetTopicByIdUseCase getTopicByIdUseCase;
     private final DeleteTopicUseCase deleteTopicUseCase;
+    private final GetVoteResultUseCase getVoteResultUseCase;
 
     public TopicController(CreateTopicUseCase createTopicUseCase,
                           GetAllTopicsUseCase getAllTopicsUseCase,
                           GetTopicByIdUseCase getTopicByIdUseCase,
-                          DeleteTopicUseCase deleteTopicUseCase) {
+                          DeleteTopicUseCase deleteTopicUseCase,
+                          GetVoteResultUseCase getVoteResultUseCase) {
         this.createTopicUseCase = createTopicUseCase;
         this.getAllTopicsUseCase = getAllTopicsUseCase;
         this.getTopicByIdUseCase = getTopicByIdUseCase;
         this.deleteTopicUseCase = deleteTopicUseCase;
+        this.getVoteResultUseCase = getVoteResultUseCase;
     }
 
     @PostMapping
@@ -54,5 +58,11 @@ public class TopicController {
     public ResponseEntity<Void> deleteTopic(@PathVariable Long id) {
         deleteTopicUseCase.execute(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/result/{topicId}")
+    public ResponseEntity<VoteResultResponse> getResult(@PathVariable Long topicId) {
+        var response = getVoteResultUseCase.execute(topicId);
+        return ResponseEntity.ok(response);
     }
 }

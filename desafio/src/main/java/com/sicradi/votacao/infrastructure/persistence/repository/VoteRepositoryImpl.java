@@ -10,6 +10,13 @@ import java.util.Optional;
 
 @Repository
 public class VoteRepositoryImpl implements VoteRepository {
+        @Override
+        public java.util.List<Vote> findAllByTopicId(Long topicId) {
+            return voteJpaRepository.findAllByTopicId(topicId)
+                    .stream()
+                    .map(VoteEntityMapper::toDomain)
+                    .collect(java.util.stream.Collectors.toList());
+        }
     private final VoteJpaRepository voteJpaRepository;
 
     public VoteRepositoryImpl(VoteJpaRepository voteJpaRepository) {

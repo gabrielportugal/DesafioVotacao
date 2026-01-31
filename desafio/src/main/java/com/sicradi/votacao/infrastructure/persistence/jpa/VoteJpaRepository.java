@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface VoteJpaRepository extends JpaRepository<VoteEntity, Long> {
     Optional<VoteEntity> findByTopicIdAndAssociateId(Long topicId, String associateId);
+    java.util.List<VoteEntity> findAllByTopicId(Long topicId);
 }

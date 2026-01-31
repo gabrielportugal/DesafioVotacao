@@ -9,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/votes")
+@RequestMapping("api/votes")
 public class VoteController {
     private final RegisterVoteUseCase registerVoteUseCase;
+    private final com.sicradi.votacao.domain.repository.VoteRepository voteRepository;
 
-    public VoteController(RegisterVoteUseCase registerVoteUseCase) {
+    public VoteController(RegisterVoteUseCase registerVoteUseCase, com.sicradi.votacao.domain.repository.VoteRepository voteRepository) {
         this.registerVoteUseCase = registerVoteUseCase;
+        this.voteRepository = voteRepository;
     }
 
     @PostMapping

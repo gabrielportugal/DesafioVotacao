@@ -23,6 +23,6 @@ public class UseCaseConfigTopic {
 
     @Bean
     public DeleteTopicUseCase deleteTopicUseCase(TopicRepository topicRepository) {
-        return new DeleteTopicUseCase(topicRepository);
+        return new DeleteTopicUseCase(topicRepository, null);
     }
 }

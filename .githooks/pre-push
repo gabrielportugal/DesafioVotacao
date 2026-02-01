@@ -1,32 +1,39 @@
-# Edite o script .githooks/pre-push
 #!/bin/bash
 
 echo "🧪 Executando testes obrigatórios..."
 
-# Navega até o diretório do Maven
-if [ -f "desafio/pom.xml" ]; then
+# Verifica se estamos no diretório correto
+echo "📁 Diretório atual: $(pwd)"
+
+# Verifica se existe pom.xml no diretório atual ou em subdiretórios
+if [ -f "pom.xml" ]; then
+    echo "✅ pom.xml encontrado no diretório atual"
+elif [ -f "desafio/pom.xml" ]; then
+    echo "📂 Entrando no diretório desafio/"
     cd desafio
-    echo "📁 Diretório do projeto: $(pwd)"
-elif [ -f "pom.xml" ]; then
-    echo "📁 Diretório do projeto: $(pwd)"
+    echo "📁 Agora em: $(pwd)"
 else
     echo "❌ ERRO: pom.xml não encontrado!"
     echo "Procurando pom.xml..."
-    find . -name "pom.xml" 2>/dev/null || echo "Nenhum pom.xml encontrado"
+    find . -name "pom.xml" -type f 2>/dev/null
     exit 1
 fi
 
 # Executa os testes
-echo "🔧 Executando mvn test..."
+echo "🔧 Executando mvn clean test..."
 mvn clean test
 
-if [ $? -ne 0 ]; then
+TEST_RESULT=$?
+if [ $TEST_RESULT -ne 0 ]; then
     echo ""
     echo "❌❌❌ PUSH BLOQUEADO ❌❌❌"
     echo "Testes falharam no branch develop."
     echo ""
-    echo "Execute para debug:"
-    echo "  cd desafio && mvn test"
+    echo "Para executar manualmente:"
+    echo "  mvn clean test"
+    echo ""
+    echo "Para pular os testes (não recomendado):"
+    echo "  git push --no-verify"
     exit 1
 fi
 

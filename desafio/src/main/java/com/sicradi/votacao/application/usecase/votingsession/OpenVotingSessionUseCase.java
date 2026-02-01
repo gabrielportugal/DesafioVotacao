@@ -11,15 +11,18 @@ import com.sicradi.votacao.domain.repository.TopicRepository;
 import com.sicradi.votacao.exceptions.ValidationException;
 import com.sicradi.votacao.exceptions.BusinessException;
 import com.sicradi.votacao.exceptions.NotFoundException;
+import com.sicradi.votacao.application.config.VotingSessionProperties;
+
 
 public class OpenVotingSessionUseCase {
-
     private final VotingSessionRepository votingSessionRepository;
     private final TopicRepository topicRepository;
+    private final VotingSessionProperties votingSessionProperties;
 
-    public OpenVotingSessionUseCase(VotingSessionRepository votingSessionRepository, TopicRepository topicRepository) {
+    public OpenVotingSessionUseCase(VotingSessionRepository votingSessionRepository, TopicRepository topicRepository, VotingSessionProperties votingSessionProperties) {
         this.votingSessionRepository = votingSessionRepository;
         this.topicRepository = topicRepository;
+        this.votingSessionProperties = votingSessionProperties;
     }
 
     public VotingSession execute(Long topicId, Integer duration) {
@@ -41,7 +44,12 @@ public class OpenVotingSessionUseCase {
             throw new BusinessException("Já existe uma sessão aberta.");
         }
 
-        VotingSession session = new VotingSession(topicId, duration);
+        Integer sessionDuration = duration;
+        if (sessionDuration == null || sessionDuration <= 0) {
+            sessionDuration = votingSessionProperties.getDefaultDurationMinutes();
+        }
+
+        VotingSession session = new VotingSession(topicId, sessionDuration);
         return votingSessionRepository.save(session);
     }
 

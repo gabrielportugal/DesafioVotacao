@@ -1,6 +1,7 @@
 package com.sicradi.votacao.application.usecase.votingsession;
 
 import com.sicradi.votacao.domain.repository.VotingSessionRepository;
+import com.sicradi.votacao.application.config.VotingSessionProperties;
 import com.sicradi.votacao.domain.repository.TopicRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,9 +10,11 @@ import org.springframework.context.annotation.Configuration;
 public class VotingSessionUseCaseConfig {
 
     @Bean
-    public OpenVotingSessionUseCase openVotingSessionUseCase(VotingSessionRepository votingSessionRepository,
-            TopicRepository topicRepository) {
-        return new OpenVotingSessionUseCase(votingSessionRepository, topicRepository);
+    public OpenVotingSessionUseCase openVotingSessionUseCase(
+            VotingSessionRepository votingSessionRepository,
+            TopicRepository topicRepository,
+            VotingSessionProperties votingSessionProperties) {
+        return new OpenVotingSessionUseCase(votingSessionRepository, topicRepository, votingSessionProperties);
     }
 
     @Bean

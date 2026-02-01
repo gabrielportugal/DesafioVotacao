@@ -35,16 +35,14 @@ class OpenVotingSessionUseCaseTest {
     }
 
     @Test
-    void deveAbrirSessaoDeVotacaoComSucesso() {
-        // Cria um tópico para associar à sessão
+    void deveAbrirSessaoDeVotacaoComDuracao1() {
         TopicRequest topicRequest = new TopicRequest();
-        topicRequest.setTitle("Pauta Sessão");
-        topicRequest.setDescription("Descrição da pauta para sessão");
+        topicRequest.setTitle("Pauta Sessão 1");
+        topicRequest.setDescription("Descrição da pauta para sessão 1");
         ResponseEntity<TopicResponse> topicResponse = topicController.createTopic(topicRequest);
         assertThat(topicResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
         TopicResponse topic = topicResponse.getBody();
         assertThat(topic).isNotNull();
-        // Abre sessão
         VotingSessionRequest sessionRequest = new VotingSessionRequest();
         sessionRequest.setTopicId(topic.getId());
         sessionRequest.setDuration(1); // 1 minuto
@@ -54,5 +52,48 @@ class OpenVotingSessionUseCaseTest {
         assertThat(session).isNotNull();
         assertThat(session.getTopicId()).isEqualTo(topic.getId());
         assertThat(session.getId()).isNotNull();
+        assertThat(session.getDuration()).isEqualTo(1);
+    }
+
+    @Test
+    void deveAbrirSessaoDeVotacaoComDuracaoZero() {
+        TopicRequest topicRequest = new TopicRequest();
+        topicRequest.setTitle("Pauta Sessão Zero");
+        topicRequest.setDescription("Descrição da pauta para sessão zero");
+        ResponseEntity<TopicResponse> topicResponse = topicController.createTopic(topicRequest);
+        assertThat(topicResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        TopicResponse topic = topicResponse.getBody();
+        assertThat(topic).isNotNull();
+        VotingSessionRequest sessionRequest = new VotingSessionRequest();
+        sessionRequest.setTopicId(topic.getId());
+        sessionRequest.setDuration(0); // zero
+        ResponseEntity<VotingSessionResponse> response = votingSessionController.openSession(sessionRequest);
+        assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        VotingSessionResponse session = response.getBody();
+        assertThat(session).isNotNull();
+        assertThat(session.getTopicId()).isEqualTo(topic.getId());
+        assertThat(session.getId()).isNotNull();
+        assertThat(session.getDuration()).isEqualTo(1); // default
+    }
+    
+    @Test
+    void deveAbrirSessaoDeVotacaoComDuracaoNull() {
+        TopicRequest topicRequest = new TopicRequest();
+        topicRequest.setTitle("Pauta Sessão Null");
+        topicRequest.setDescription("Descrição da pauta para sessão Null");
+        ResponseEntity<TopicResponse> topicResponse = topicController.createTopic(topicRequest);
+        assertThat(topicResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        TopicResponse topic = topicResponse.getBody();
+        assertThat(topic).isNotNull();
+        VotingSessionRequest sessionRequest = new VotingSessionRequest();
+        sessionRequest.setTopicId(topic.getId());
+        sessionRequest.setDuration(null); // null
+        ResponseEntity<VotingSessionResponse> response = votingSessionController.openSession(sessionRequest);
+        assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        VotingSessionResponse session = response.getBody();
+        assertThat(session).isNotNull();
+        assertThat(session.getTopicId()).isEqualTo(topic.getId());
+        assertThat(session.getId()).isNotNull();
+        assertThat(session.getDuration()).isEqualTo(1); // default
     }
 }

@@ -181,6 +181,7 @@ A técnica de **Lazy Update** garante que sessões de votação sejam fechadas a
 
 <img src="./docs/fluxoPrincipal.png" alt="Fluxo Principal do sistema" width="80%"/>
 ---
+
 ## 🌱 Versionamento de API
 
 - **Versionamento por URL:** Configurado centralizadamente.

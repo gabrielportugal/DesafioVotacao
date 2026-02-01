@@ -105,6 +105,35 @@ mvn test
 
 ---
 
+# Desafio de Votação - Integração FAKE de Validação de CPF (Bônus)
+
+## Integração Fake
+Este projeto possui uma integração FAKE para validação de CPF, simulando um sistema externo. O CPF é gerado internamente e o resultado é aleatório a cada chamada.
+
+- O endpoint `/api/v1/cpf/validation` (POST) não recebe CPF no request.
+- O CPF é gerado aleatoriamente pelo sistema.
+- O retorno pode ser:
+  - CPF inválido (HTTP 404)
+  - CPF válido e ABLE_TO_VOTE (HTTP 200)
+  - CPF válido e UNABLE_TO_VOTE (HTTP 403)
+
+## Arquitetura
+- Separação clara entre Domain, Application, Infrastructure e Interfaces.
+- Nenhuma lógica de negócio nos controllers.
+- UseCases centralizam o fluxo.
+- Módulo de integração fake em `infrastructure/external/cpf`.
+
+## Testes
+- Testes unitários cobrem todos os cenários do bônus.
+- O client fake pode ser mockado nos testes para garantir previsibilidade.
+
+## Observações
+- Não há dependência de APIs externas.
+- O comportamento é propositalmente aleatório para simular cenários reais.
+- O bônus não interfere no fluxo de votação principal.
+
+---
+
 ## ⚙️ Tecnologias Utilizadas
 
 - Java 17

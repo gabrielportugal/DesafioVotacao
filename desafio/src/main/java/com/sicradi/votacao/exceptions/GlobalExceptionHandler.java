@@ -53,6 +53,16 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(InvalidCpfException.class)
+  public ResponseEntity<String> handleInvalidCpf(InvalidCpfException ex) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(UnableToVoteException.class)
+  public ResponseEntity<String> handleUnableToVote(UnableToVoteException ex) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
     Map<String, Object> body = new LinkedHashMap<>();

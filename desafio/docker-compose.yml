@@ -1,26 +1,47 @@
 version: "3.9"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: votacao-app
+  postgres:
+    image: postgres:16-alpine
+    container_name: votacao-postgres
+    environment:
+      POSTGRES_DB: votacao
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: votacao-api
     restart: unless-stopped
     ports:
       - "8080:8080"
-    entrypoint: ["/wait-for-it.sh", "host.docker.internal:5432", "--", "java", "-jar", "app.jar"]
-    volumes:
-      - ./src:/app/src
-      - ./wait-for-it.sh:/wait-for-it.sh
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/votacao
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_FLYWAY_ENABLED: false
+      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx1g -Dfile.encoding=UTF-8"
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-    networks:
-      - votacao-net
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
-networks:
-  votacao-net:
-    driver: bridge
+volumes:
+  postgres-data:

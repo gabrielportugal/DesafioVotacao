@@ -1,5 +1,4 @@
 # Edite o script .githooks/pre-push
-cat > .githooks/pre-push << 'EOF'
 #!/bin/bash
 
 echo "🧪 Executando testes obrigatórios..."
@@ -33,6 +32,3 @@ fi
 
 echo "✅ Testes passaram! Continuando push..."
 exit 0
-EOF
-
-chmod +x .githooks/pre-push

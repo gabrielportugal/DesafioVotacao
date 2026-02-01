@@ -39,7 +39,7 @@ O projeto adota **DDD Light** e **Clean Architecture**, com princípios **SOLID*
 - **Resiliência**: Tratamento adequado de erros e fallbacks configuráveis
 - **Escalabilidade**: Pronto para crescimento com monitoramento implementado
 
-Nota: O projeto foi estruturado para ser facilmente compreendido, mantido e estendido, seguindo as melhores práticas do mercado.
+> **Nota**: O projeto foi estruturado para ser facilmente compreendido, mantido e estendido, seguindo as melhores práticas do mercado.
 
 ---
 
@@ -179,7 +179,7 @@ A técnica de **Lazy Update** garante que sessões de votação sejam fechadas a
 ---
 ## 🔀 Fluxo Principal
 
->imagem fluxo principal
+<img src="./docs/fluxoPrincipal.png" alt="Fluxo Principal do sistema" width="45%"/>
 ---
 ## 🌱 Versionamento de API
 

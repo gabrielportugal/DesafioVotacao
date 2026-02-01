@@ -1,0 +1,30 @@
+# prometheus.yml - CORRIGIDO
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # 1. Prometheus monitora a si mesmo
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # 2. Sua aplicação Spring Boot
+  - job_name: 'spring-boot-app'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          application: 'votacao-api'
+          environment: 'local'
+          instance: 'app-local'
+
+  # 3. Para testes k6 (opcional)
+  - job_name: 'k6-tests'
+    static_configs:
+      - targets: ['host.docker.internal:6565']
+        labels:
+          test_tool: 'k6'

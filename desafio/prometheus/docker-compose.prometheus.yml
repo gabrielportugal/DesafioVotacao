@@ -1,0 +1,20 @@
+# docker-compose.prometheus.yml - CORRIGIDO
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-local
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    volumes:
+      # CORREÇÃO: Use caminho relativo à pasta atual
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:

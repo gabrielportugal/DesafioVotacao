@@ -219,6 +219,20 @@ Ferramenta de teste de carga que simula:
 - **Throughput**: Até 1000 requisições/segundo
 - **Disponibilidade**: 99.9% uptime
 - **Escalabilidade**: Resposta linear ao aumento de carga
+
+### Prints do Prometheus
+- Uso da Memória Heap em MB
+
+<img src="./docs/memoriaHeapUsadaEmMb.jpg" alt="Uso da Memória Heap em MB" width="80%"/>
+
+- Percentual da Memória HEAP x Memória Máxima
+
+<img src="./docs/memoriaHeapXMax_percentual.png" alt="Percentual da Memória HEAP x Memória Máxima" width="80%"/>
+
+- Uso da CPU
+
+<img src="./docs/usoCpu.png" alt="Uso da CPU" width="80%"/>
+
 ---
 ## 📡 Exemplos Práticos
 

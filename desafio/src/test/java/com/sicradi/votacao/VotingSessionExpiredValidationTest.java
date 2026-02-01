@@ -57,7 +57,7 @@ class VotingSessionExpiredValidationTest {
         // Tenta votar
         VoteRequest voteRequest = new VoteRequest();
         voteRequest.setTopicId(topic.getId());
-        voteRequest.setAssociateId("99999999999");
+        voteRequest.setAssociateId("52998224725"); // CPF válido
         voteRequest.setChoice("Sim");
         try {
             voteController.registerVote(voteRequest);

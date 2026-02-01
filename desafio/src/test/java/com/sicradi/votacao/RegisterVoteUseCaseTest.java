@@ -35,8 +35,7 @@ class RegisterVoteUseCaseTest {
     }
 
     @Test
-    void deveRegistrarVotoComSucesso() {
-        // Cria um tópico
+    void deveRegistrarVotoComCpfValido() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setTitle("Pauta Voto");
         topicRequest.setDescription("Descrição da pauta para voto");
@@ -44,7 +43,6 @@ class RegisterVoteUseCaseTest {
         assertThat(topicResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
         TopicResponse topic = topicResponse.getBody();
         assertThat(topic).isNotNull();
-        // Abre sessão
         VotingSessionRequest sessionRequest = new VotingSessionRequest();
         sessionRequest.setTopicId(topic.getId());
         sessionRequest.setDuration(1);
@@ -52,18 +50,45 @@ class RegisterVoteUseCaseTest {
         assertThat(sessionResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
         VotingSessionResponse session = sessionResponse.getBody();
         assertThat(session).isNotNull();
-        // Registra voto
         VoteRequest voteRequest = new VoteRequest();
         voteRequest.setTopicId(topic.getId());
-        voteRequest.setAssociateId("12345678901");
+        voteRequest.setAssociateId("52998224725"); // CPF válido
         voteRequest.setChoice("Sim");
         ResponseEntity<VoteResponse> voteResponse = voteController.registerVote(voteRequest);
         assertThat(voteResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
         VoteResponse vote = voteResponse.getBody();
         assertThat(vote).isNotNull();
         assertThat(vote.getTopicId()).isEqualTo(topic.getId());
-        assertThat(vote.getAssociateId()).isEqualTo("12345678901");
+        assertThat(vote.getAssociateId()).isEqualTo("52998224725");
         assertThat(vote.getChoice()).isEqualTo(1);
         assertThat(vote.getId()).isNotNull();
+    }
+
+    @Test
+    void deveFalharComCpfInvalido() {
+        TopicRequest topicRequest = new TopicRequest();
+        topicRequest.setTitle("Pauta Voto");
+        topicRequest.setDescription("Descrição da pauta para voto");
+        ResponseEntity<TopicResponse> topicResponse = topicController.createTopic(topicRequest);
+        assertThat(topicResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        TopicResponse topic = topicResponse.getBody();
+        assertThat(topic).isNotNull();
+        VotingSessionRequest sessionRequest = new VotingSessionRequest();
+        sessionRequest.setTopicId(topic.getId());
+        sessionRequest.setDuration(1);
+        ResponseEntity<VotingSessionResponse> sessionResponse = votingSessionController.openSession(sessionRequest);
+        assertThat(sessionResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
+        VotingSessionResponse session = sessionResponse.getBody();
+        assertThat(session).isNotNull();
+        VoteRequest voteRequest = new VoteRequest();
+        voteRequest.setTopicId(topic.getId());
+        voteRequest.setAssociateId("12345678900"); // CPF inválido
+        voteRequest.setChoice("Sim");
+        try {
+            ResponseEntity<VoteResponse> voteResponse = voteController.registerVote(voteRequest);
+            assertThat(voteResponse.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            assertThat(ex.getMessage()).contains("CPF inválido");
+        }
     }
 }

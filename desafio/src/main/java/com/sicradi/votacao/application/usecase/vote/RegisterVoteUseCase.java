@@ -10,6 +10,8 @@ import com.sicradi.votacao.application.usecase.votingsession.CheckAndCloseVoting
 import com.sicradi.votacao.exceptions.ValidationException;
 import com.sicradi.votacao.exceptions.NotFoundException;
 import com.sicradi.votacao.exceptions.BusinessException;
+import com.sicradi.votacao.application.utils.CpfValidator;
+import com.sicradi.votacao.exceptions.InvalidCpfException;
 
 public class RegisterVoteUseCase {
 
@@ -30,6 +32,11 @@ public class RegisterVoteUseCase {
     public Vote execute(Long topicId, String associateId, String choiceRaw) {
         if (topicId == null || associateId == null || choiceRaw == null) {
             throw new ValidationException("Todos os campos são obrigatórios.");
+        }
+
+        // Validação de CPF
+        if (!CpfValidator.isValid(associateId)) {
+            throw new InvalidCpfException("CPF inválido");
         }
 
         Integer choice = parseChoice(choiceRaw);

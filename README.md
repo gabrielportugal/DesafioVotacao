@@ -1,42 +1,84 @@
-
 # Desafio de Votação
 
-## 📌 Visão Geral do Projeto
+## 📚 Visão Geral
 
-API REST para gerenciamento de pautas, sessões de votação e votos de associados, desenvolvida com foco em arquitetura limpa, robustez e clareza de regras de negócio. O sistema permite a abertura de pautas, criação de sessões de votação com duração configurável, registro de votos e consulta de resultados, seguindo requisitos técnicos e de negócio típicos de ambientes cooperativos.
+API REST robusta para gerenciamento de pautas, sessões de votação e votos de associados, desenvolvida com foco em arquitetura limpa, clareza de regras de negócio e alta manutenibilidade. O sistema permite abertura de pautas, criação de sessões de votação com duração configurável, registro de votos e consulta de resultados, atendendo requisitos típicos de ambientes cooperativos.
 
 ---
 
-## 🏗️ Arquitetura e Organização
+## 🚀 Diferenciais do Projeto
 
-O projeto adota DDD Light, Clean Architecture e princípios SOLID, promovendo separação clara de responsabilidades, baixo acoplamento e alta coesão. As camadas são organizadas conforme abaixo:
+- **Arquitetura Clean e DDD Light**: Separação rigorosa entre camadas, facilitando evolução e manutenção.
+- **Lazy Update (Atualização Sob Demanda)**: Sessões de votação são fechadas apenas quando acessadas, sem jobs, schedulers ou threads.
+- **Configuração Centralizada**: Parâmetros como duração padrão de sessão são facilmente customizáveis.
+- **Integração Fake Desacoplada**: Validação de CPF simulada, isolada e facilmente testável.
+- **Cobertura de Testes Abrangente**: Testes de UseCases, regras de negócio e integrações.
+- **Código Pronto para Escalar**: Estrutura preparada para novas features e versões de API.
+- **Baixo Acoplamento e Alta Coesão**: Controllers sem lógica de negócio, regras centralizadas em UseCases.
+- **Mappers Dedicados**: Conversão clara entre entidades, DTOs e persistência.
 
-- **Domain:** Entidades e regras de negócio puras, sem dependências técnicas.
-- **Application:** Casos de uso que orquestram operações e persistência, sem lógica de domínio.
-- **Infrastructure:** Implementação de persistência (JPA, repositórios), controllers REST e mapeamentos.
-- **Interface:** Controllers REST, DTOs e mappers para adaptação entre camadas.
+---
 
-### 🧩 Estrutura de Pastas
+## 🏗️ Arquitetura e Padrões
+
+O projeto adota **DDD Light** e **Clean Architecture**, com princípios **SOLID** e separação clara de responsabilidades:
+
+- **Domain**: Entidades e regras de negócio puras, sem dependências técnicas.
+- **Application (UseCases)**: Orquestração de operações e persistência, centralizando regras de fluxo.
+- **Infrastructure**: Implementação de persistência (JPA, repositórios), integrações externas e configurações.
+- **Interfaces**: Controllers REST, DTOs e mappers para adaptação entre camadas.
+
+**Importante:**  
+Toda lógica de negócio reside em UseCases e entidades de domínio. Controllers REST são finos, apenas adaptando requisições e respostas.
+
+---
+
+## 🗂️ Estrutura de Pastas
 
 ```text
-src/main/java/com/sicredi/votacao
+src/main/java/com/sicradi/votacao
 ├── application
 │   └── usecase
+│       ├── topic
+│       ├── vote
+│       └── votingsession
+│           └── VotingSessionUseCaseConfig.java
+│   └── ValidateCpfUseCase.java
 ├── domain
 │   ├── model
 │   └── repository
 ├── exceptions
+│   ├── BusinessException.java
+│   ├── GlobalExceptionHandler.java
+│   ├── InvalidCpfException.java
+│   ├── NotFoundException.java
+│   ├── TechnicalException.java
+│   ├── UnableToVoteException.java
+│   └── ValidationException.java
 ├── infrastructure
-│   ├── persistence
-│   │   ├── entity
-│   │   ├── repository
-│   │   └── mapper
-│   └── configuration
-├── interface
-│   └── rest
-│       ├── controller
-│       ├── dto
+│   ├── configuration
+│   │   ├── ApiBasePath.java
+│   │   └── ApiVersionProperties.java
+│   ├── external
+│   │   └── cpf
+│   │       ├── CpfGenerator.java
+│   │       ├── CpfValidationClient.java
+│   │       ├── CpfValidationResponse.java
+│   │       ├── CpfValidationStatus.java
+│   │       └── FakeCpfValidationClient.java
+│   └── persistence
+│       ├── entity
+│       ├── repository
 │       └── mapper
+├── interfaces
+│   └── rest
+│       ├── dto
+│       ├── mapper
+│       └── v1
+│           ├── CpfValidationController.java
+│           ├── TopicController.java
+│           ├── VoteController.java
+│           └── VotingSessionController.java
 └── VotacaoApplication.java
 ```
 
@@ -44,55 +86,102 @@ src/main/java/com/sicredi/votacao
 
 ## 🧠 Regras de Negócio
 
-- **Abertura de Pautas:** Toda pauta é criada com estado inicial `OPEN`.
-- **Criação de Sessões de Votação:** Sessões são sempre vinculadas a uma pauta existente.
-- **Duração Configurável:** A duração da sessão é definida na criação, com valor padrão aplicado se não informado.
+- **Abertura de Pautas:** Toda pauta inicia com status `OPEN`.
+- **Sessões de Votação:** Sempre vinculadas a uma pauta existente.
+- **Duração Configurável:** Definida na criação, com fallback para valor padrão centralizado.
 - **Expiração de Sessão:** Determinada por `createdAt + duration` (minutos).
-- **Validação de Expiração:** O método de domínio `isExpired()` é usado apenas para validação, sem persistência.
-- **Fechamento Centralizado:** O status (`OPEN` → `CLOSED`) e o campo `closedAt` são atualizados exclusivamente pelo caso de uso `CheckAndCloseVotingSessionUseCase`.
-- **Fechamento Sob Demanda:** Não há schedulers, threads ou jobs em background; o fechamento ocorre sob demanda, sempre que a sessão é lida ou utilizada.
-- **Consistência Garantida:** Toda operação de leitura ou uso de sessão passa pelo caso de uso de verificação e fechamento, garantindo estado consistente.
-- **Remoção de closedBy:** O campo foi removido por não fazer parte da regra de negócio.
-- **Uso de Mappers:** Conversão entre entidades de domínio, JPA e DTOs é feita por mappers dedicados.
+- **Validação de Expiração:** Método de domínio `isExpired()` apenas para validação, sem persistência.
+- **Fechamento Centralizado:** Status e `closedAt` atualizados exclusivamente pelo caso de uso `CheckAndCloseVotingSessionUseCase`.
+- **Lazy Update:** Não há schedulers, threads ou jobs em background; fechamento ocorre sob demanda.
+- **Consistência Garantida:** Toda operação de leitura/uso de sessão passa por verificação e fechamento.
+- **Remoção de closedBy:** Campo removido por não ser regra de negócio.
+- **Uso de Mappers:** Conversão entre entidades, JPA e DTOs feita por mappers dedicados.
+
+---
+
+## 💤 Lazy Update (Atualização Sob Demanda)
+
+### O que é?
+
+A técnica de **Lazy Update** garante que sessões de votação sejam fechadas apenas quando acessadas, eliminando a necessidade de schedulers, jobs ou threads.
+
+### Como funciona?
+
+- **Sem jobs ou schedulers:** Não há processos em background.
+- **Fechamento sob demanda:** Sempre que uma sessão é lida ou utilizada, o caso de uso `CheckAndCloseVotingSessionUseCase` valida e fecha a sessão se necessário.
+- **Estado sempre consistente:** O sistema garante que o status da sessão está correto no momento do acesso.
+
+### Vantagens
+
+- **Simplicidade operacional:** Menos complexidade e dependências.
+- **Menor custo:** Sem consumo de recursos com jobs.
+- **Consistência:** Estado sempre atualizado no momento do uso.
+
+---
+
+## ⚙️ Configuração de Duração de Sessão
+
+- A duração da sessão pode ser informada na criação.
+- Se não for informada, o sistema utiliza o valor padrão definido em `VotingSessionProperties`.
+- Essa configuração é centralizada, customizável e pode ser alterada facilmente via arquivo de propriedades (`application.properties`):
+
+```properties
+votingsession.default-duration-minutes=5
+```
+
+---
+
+## 🧾 Validação de CPF
+
+- **Validador de CPF** implementado em `utils` e utilizado no `RegisterVoteUseCase`.
+- **CPF inválido:** Bloqueia o voto imediatamente, lançando `InvalidCpfException`.
+- **CPF válido:** Segue para validação externa (fake), simulando consulta a serviço externo.
+- **Reutilização de exceptions:** O sistema utiliza exceções já existentes para padronizar respostas.
+
+---
+
+## 🏆 Integração FAKE de Validação de CPF
+
+- **Rota exclusiva:** `/api/v1/cpf/validation` (POST) para testar o bônus.
+- **Sem CPF no request:** O CPF é gerado aleatoriamente pelo sistema.
+- **Comportamento aleatório:** Simula cenários reais de validação.
+- **Possíveis retornos HTTP:**
+  - `404` → CPF inválido
+  - `200` → CPF válido e ABLE_TO_VOTE
+  - `403` (ou `422`) → CPF válido e UNABLE_TO_VOTE
+- **Isolamento:** Integração fake desacoplada, facilmente mockável em testes.
+
+---
+
+## 🧪 Estratégia de Testes
+
+Os testes do projeto abrangem tanto testes unitários quanto testes de integração. Os UseCases e validadores de regras de negócio são validados por testes unitários, garantindo precisão e isolamento das regras centrais. Já os fluxos completos, incluindo controllers e endpoints REST, são cobertos por testes de integração, assegurando que os componentes interagem corretamente e que o sistema funciona de ponta a ponta.
+
+- **Testes de UseCases:** Cobrem todos os fluxos principais e regras de negócio.
+- **Testes do RegisterVoteUseCase:** Validam cenários de CPF válido e inválido.
+- **Testes do bônus:** Mockam o client fake para garantir previsibilidade.
+- **Cobertura de integração:** Controllers e endpoints principais testados.
+- **Execução recomendada:**  
+  ```bash
+  mvn test
+  ```
 
 ---
 
 ## 🔀 Fluxo Principal da Aplicação
 
 1. Cadastro de pauta (`Topic`) com estado inicial `OPEN`.
-2. Criação de sessão de votação (`VotingSession`) vinculada à pauta, com duração definida.
-3. Registro de votos por associados, respeitando unicidade por pauta.
-4. Consulta de resultados e sessões, sempre garantindo consistência do estado via verificação sob demanda.
+2. Criação de sessão de votação (`VotingSession`) vinculada à pauta, com duração definida ou padrão.
+3. Registro de votos por associados, com validação de CPF e unicidade por pauta.
+4. Consulta de resultados e sessões, sempre garantindo consistência via lazy update.
 
 ---
-
-## 🔁 Estratégias de Atualização e Consistência de Dados
-
-A aplicação utiliza uma estratégia de atualização sob demanda para o fechamento de sessões de votação. Em vez de empregar threads, schedulers ou jobs em background, toda operação de leitura ou uso de uma sessão (como consultas, votação ou obtenção de tópicos) passa por um caso de uso responsável por validar se a sessão expirou. Caso a expiração seja detectada, a sessão é automaticamente fechada e persistida antes de ser retornada.
-
-Essa abordagem é semelhante à utilizada por grandes portais como [Portfólio](https://g1.globo.com/) e [Portal Multiplix](https://www.portalmultiplix.com/) , onde o estado mais recente é atualizado no momento do primeiro acesso, garantindo consistência, simplicidade operacional e menor custo de infraestrutura. Assim, o sistema permanece sempre atualizado sem a complexidade de processos assíncronos contínuos.
-
----
-
-## 🧪 Testes
-
-- Testes automatizados cobrem casos de uso, regras de negócio e integração.
-- Recomenda-se rodar os testes via Maven para garantir a integridade do sistema antes de qualquer entrega.
-
-```bash
-mvn test
-```
-
----
-
-
 
 ## 🌱 Versionamento de API
 
-- Versionamento por URL, configurado centralizadamente (desafio/src/main/resources/infrastructure/configuration/api-version.yml).
-- Exemplo de URL: `/api/v1/topics`
-- Nova versão: criar controllers em `interfaces.rest.v2` e atualizar configuração.
-- Controllers não possuem versão hardcoded, facilitando evolução.
+- **Versionamento por URL:** Configurado centralizadamente.
+- **Exemplo:** `/api/v1/topics`
+- **Evolução:** Novas versões criadas em `interfaces.rest.v2`, sem hardcode de versão nos controllers.
 
 ---
 
@@ -100,37 +189,8 @@ mvn test
 
 - **main:** Produção estável.
 - **develop:** Desenvolvimento contínuo.
-- **release/x.x:** Estabilização e preparação de versões.
-- Estratégia baseada em Git Flow, garantindo organização e controle de entregas.
-
----
-
-# Desafio de Votação - Integração FAKE de Validação de CPF (Bônus)
-
-## Integração Fake
-Este projeto possui uma integração FAKE para validação de CPF, simulando um sistema externo. O CPF é gerado internamente e o resultado é aleatório a cada chamada.
-
-- O endpoint `/api/v1/cpf/validation` (POST) não recebe CPF no request.
-- O CPF é gerado aleatoriamente pelo sistema.
-- O retorno pode ser:
-  - CPF inválido (HTTP 404)
-  - CPF válido e ABLE_TO_VOTE (HTTP 200)
-  - CPF válido e UNABLE_TO_VOTE (HTTP 403)
-
-## Arquitetura
-- Separação clara entre Domain, Application, Infrastructure e Interfaces.
-- Nenhuma lógica de negócio nos controllers.
-- UseCases centralizam o fluxo.
-- Módulo de integração fake em `infrastructure/external/cpf`.
-
-## Testes
-- Testes unitários cobrem todos os cenários do bônus.
-- O client fake pode ser mockado nos testes para garantir previsibilidade.
-
-## Observações
-- Não há dependência de APIs externas.
-- O comportamento é propositalmente aleatório para simular cenários reais.
-- O bônus não interfere no fluxo de votação principal.
+- **release/x.x:** Estabilização de versões.
+- **Git Flow:** Organização e controle de entregas.
 
 ---
 
@@ -159,25 +219,25 @@ git clone https://github.com/<seu-usuario>/DesafioVotacao.git
 cd DesafioVotacao
 ```
 
-### 🗄️ Configuração do banco de dados
-É obrigatório configurar os arquivos de propriedades tanto do ambiente **main** quanto **test**.
+### Configuração do banco de dados
+
+Crie os bancos manualmente:
 
 ```sql
 CREATE DATABASE votingdb;
 CREATE DATABASE votingdb_test;
 ```
 
-⚠️ Importante
-O Spring não cria o banco de dados automaticamente.
-É necessário criar manualmente os bancos com os mesmos nomes definidos nos arquivos de configuração.
+> ⚠️ O Spring não cria o banco automaticamente.  
+> Os nomes devem coincidir com os arquivos de configuração.
 
-### Executar:
+### Executar
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-A API estará disponível em:  
+Acesse:  
 `http://localhost:8080/api/v1`
 
 ---
@@ -187,3 +247,5 @@ A API estará disponível em:
 **Gabriel Portugal**  
 💼 [Portfólio](https://gabrielportugal.web.app/)  
 💻 [LinkedIn](https://www.linkedin.com/in/gabriel-portugal-b26a13188/)
+
+---

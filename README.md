@@ -5,6 +5,8 @@
 
 API REST para gerenciamento de pautas, sessões de votação e votos, com arquitetura limpa, regras de negócio claras e alta manutenibilidade.
 
+<img src="./docs/desafioVotacao.gif" alt="Fluxo Principal do sistema" width="80%"/>
+
 ---
 
 ## 🏗️ Arquitetura e Padrões
@@ -16,6 +18,30 @@ O projeto adota **DDD Light** e **Clean Architecture**, com princípios **SOLID*
 - **Interfaces:** Controllers REST, DTOs, mappers.
 
 > **Importante:** Toda lógica de negócio reside em UseCases e entidades de domínio. Controllers REST são finos, apenas adaptando requisições e respostas.
+
+A imagem a seguir apresenta o diagrama de sequência que representa a relação entre as camadas do sistema.
+
+<img src="./docs/diagramaSequenciaExemplo.png" alt="Exemplo de Diagrama de Sequência das Camadas" width="80%"/>
+
+---
+
+---
+
+## 🗄️ Banco de Dados (PostgreSQL)
+O projeto utiliza **PostgreSQL** como sistema de gerenciamento de banco de dados, adotando uma padronização rigorosa de nomenclatura para garantir clareza, legibilidade e manutenção facilitada das consultas SQL.
+
+Todas as colunas das tabelas utilizam um prefixo identificador da tabela à qual pertencem. Essa abordagem traz benefícios importantes:
+- Facilita a identificação imediata da origem da coluna em consultas complexas.
+- Evita ambiguidades em JOINs entre múltiplas tabelas.
+- Torna as queries mais legíveis e autoexplicativas.
+- Reduz erros em manutenção e evolução do banco.
+
+Exemplo: top_id, top_created_at, vot_associate_id.
+
+Dessa forma, ao analisar uma query, é possível evidenciar rapidamente a qual tabela cada campo pertence, mesmo sem aliases explícitos. A imagem abaixo ilustra a Modelagem Entidade Relacionamento do banco de dados:
+
+<img src="./docs/bancoDados.png" alt="Modelo Entidade Relacionamento" width="80%"/>
+
 ---
 
 
@@ -55,7 +81,7 @@ O projeto adota **DDD Light** e **Clean Architecture**, com princípios **SOLID*
 ## 🗂️ Estrutura de Pastas
 
 ```text
-src/main/java/com/sicredi/votacao
+desafio/src/main/java/com/sicredi/votacao
 ├── application
 │   └── config
 │   └── usecase
@@ -104,11 +130,13 @@ git clone https://github.com/gabrielportugal/DesafioVotacao.git
 cd DesafioVotacao/desafio
 
 # Crie os bancos manualmente
-CREATE DATABASE votingdb;
-CREATE DATABASE votingdb_test;
+CREATE DATABASE votacao;
+CREATE DATABASE votacao-teste;
+
+# Altere as credenciais do application.properties e application-test.properties
 
 # Execute
-./mvnw spring-boot:run
+mvnw spring-boot:run
 ```
 
 #### Com Docker
@@ -121,17 +149,29 @@ docker-compose up --build
 ## 🔌 Endpoints da API
 
 #### 📝 Gerenciamento de Pautas
-- POST ```/api/v1/topi```c → Cria uma nova pauta para discussão e votação na assembleia
+- POST ```/api/v1/topic``` → Cria uma nova pauta para discussão e votação na assembleia
 - GET ```/api/v1/topic``` → Lista todas as pautas cadastradas no sistema com paginação
 - GET ```/api/v1/topic/{id}``` → Consulta os detalhes de uma pauta específica por ID
-- DELETE ```/api/v1/topics/{id}``` → Remove uma pauta através de exclusão lógica (soft delete)
+- DELETE ```/api/v1/topic/{id}``` → Remove uma pauta através de exclusão lógica (soft delete)
 - GET ```/api/v1/topic/result/{id}``` → Retorna o resultado consolidado da votação de uma pauta
 
 #### 🗳️ Sessões e Votação
 
 - POST ```/api/v1/voting-session``` → Abre uma nova sessão de votação para uma pauta existente
-- POST ```/api/v1/votes``` → Registra um novo voto em uma sessão ativa
-- POST ```/api/v1/cpf/validation``` → Valida um CPF através de um serviço externo (mock/facade) que retorna aleatoriamente se é válido ou não
+- POST ```/api/v1/votes``` → Registra um novo voto em uma sessão ativa (Nota 1)
+- POST ```/api/v1/cpf/validation``` → Valida um CPF através de um serviço externo (mock/facade) que retorna aleatoriamente se é válido ou não (Nota 2)
+
+> **Nota 1**: O campo ```associateId``` possui flexibilidade para aceitar múltiplos formatos de identificação, incluindo valores numéricos, strings, e CPFs com ou sem formatação (pontos e traços).
+
+> **Nota 2**: A rota bônus possui lógica automatizada de geração e validação de CPFs. O sistema: Gera números de CPF aleatoriamente; Valida automaticamente se cada CPF gerado é válido; Retorna de forma randômica se o CPF está habilitado ou não para votação. Esta funcionalidade permite testar o fluxo completo sem necessidade de entrada manual de CPFs válidos.
+
+---
+
+## 📬 Testes via Postman
+
+Importe os arquivos no Postman:
+
+- Coleção: `postman/DesafioVotacao.postman_collection.json`
 
 ---
 
@@ -186,7 +226,7 @@ A técnica de **Lazy Update** garante que sessões de votação sejam fechadas a
 ## 🌱 Versionamento de API
 
 - **Versionamento por URL:** Configurado centralizadamente.
-- **Exemplo:** `/api/v1/topics`
+- **Exemplo:** `/api/v1/topic`
 - **Evolução:** Novas versões criadas em `interfaces.rest.v2`, sem hardcode de versão nos controllers.
 ---
 ## 🌿 Estratégia de Branches (Git)
@@ -260,23 +300,23 @@ Ferramenta de teste de carga que simula:
 
 ### Criar Pautas
 ```bash
-curl -X POST http://localhost:8080/api/v1/topics \
+curl -X POST http://localhost:8080/api/v1/topic \
   -H "Content-Type: application/json" \
   -d '{"title": "Orçamento 2026", "description": "Aprovação anual"}'
   ```
 
   ### Criar Sessão
 ```bash
-curl -X POST http://localhost:8080/api/v1/topics/1/sessions \
+curl -X POST http://localhost:8080/api/v1/voting-session \
   -H "Content-Type: application/json" \
-  -d '{"durationMinutes": 15}'
+  -d '{"topicId": 1, "duration": 15}'
   ```
 
   ### Criar Voto
 ```bash
-curl -X POST http://localhost:8080/api/v1/sessions/1/votes \
+curl -X POST http://localhost:8080/api/v1/votes \
   -H "Content-Type: application/json" \
-  -d '{"choice": "SIM", "cpf": "12345678909"}'
+  -d '{"choice": "SIM", "topicId": 1, "associateId": "12345678909"}'
   ```
 ---
 ## 🛠️ Ferramentas de Desenvolvimento

@@ -39,8 +39,8 @@ public class TopicUseCaseConfig {
     }
 
     @Bean
-    public GetVoteResultUseCase getVoteResultUseCase(VoteRepository voteRepository) {
-        return new GetVoteResultUseCase(voteRepository);
+    public GetVoteResultUseCase getVoteResultUseCase(VoteRepository voteRepository, TopicRepository topicRepository) {
+        return new GetVoteResultUseCase(voteRepository, topicRepository);
     }
 
     @Bean

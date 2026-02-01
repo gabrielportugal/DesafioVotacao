@@ -7,12 +7,12 @@ public class VoteRestMapper {
 
     public static VoteResponse toResponse(Vote vote) {
         VoteResponse response = new VoteResponse();
-        response.setId(vote.getId());
-        response.setTopicId(vote.getTopicId());
-        response.setAssociateId(vote.getAssociateId());
-        response.setChoice(vote.getChoice());
-        response.setCreatedAt(vote.getCreatedAt());
-        response.setUpdatedAt(vote.getUpdatedAt());
+        response.setId(vote.getVot_id());
+        response.setTopicId(vote.getVot_topicId());
+        response.setAssociateId(vote.getVot_associateId());
+        response.setChoice(vote.getVot_choice());
+        response.setCreatedAt(vote.getVot_createdAt());
+        response.setUpdatedAt(vote.getVot_updatedAt());
         return response;
     }
     

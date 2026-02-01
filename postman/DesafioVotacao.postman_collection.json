@@ -1,0 +1,197 @@
+{
+  "info": {
+    "_postman_id": "7ca31035-fabd-4cb4-ac1a-9eba8cdb7876",
+    "name": "DesafioVotacao",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1856017"
+  },
+  "item": [
+    {
+      "name": "1. Criar pauta",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"description\": \"Descrição da pauta\",\r\n  \"title\": \"Pauta sem sessao\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/topic",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "topic"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "1.1 Pegar todas as pautas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/topic",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "topic"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Criar sessão de votação",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"topicId\": 84,\r\n  \"duration\": 100\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/voting-session",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "voting-session"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Votar",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"topicId\": 84,\r\n  \"associateId\": \"716.262.980-68\",\r\n  \"choice\": \"Não\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/votes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "votes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Pegar resultados",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/topic/result/84",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "topic",
+            "result",
+            "84"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Pegar pauta específica",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/topic/84",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "topic",
+            "84"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Fake Cpf (bônus)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/cpf/validation",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "cpf",
+            "validation"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

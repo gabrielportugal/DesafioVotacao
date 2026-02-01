@@ -14,5 +14,7 @@ public class VoteResultResponse {
     private long totalNao;
     private double percentualSim;
     private double percentualNao;
-    
+    private String title;
+    private String description;
+
 }

@@ -54,13 +54,23 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(InvalidCpfException.class)
-  public ResponseEntity<String> handleInvalidCpf(InvalidCpfException ex) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  public ResponseEntity<Map<String, Object>> handleInvalidCpf(InvalidCpfException ex) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.NOT_FOUND.value());
+    body.put("error", "Invalid CPF");
+    body.put("message", ex.getMessage());
+    return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(UnableToVoteException.class)
-  public ResponseEntity<String> handleUnableToVote(UnableToVoteException ex) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+  public ResponseEntity<Map<String, Object>> handleUnableToVote(UnableToVoteException ex) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.FORBIDDEN.value());
+    body.put("error", "Unable to Vote");
+    body.put("message", ex.getMessage());
+    return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
   }
 
   @ExceptionHandler(Exception.class)

@@ -8,24 +8,24 @@ public class VoteEntityMapper {
     public static VoteEntity toEntity(Vote vote) {
         if (vote == null) return null;
         VoteEntity entity = new VoteEntity();
-        entity.setId(vote.getId());
-        entity.setTopicId(vote.getTopicId());
-        entity.setAssociateId(vote.getAssociateId());
-        entity.setChoice(vote.getChoice());
-        entity.setCreatedAt(vote.getCreatedAt());
-        entity.setUpdatedAt(vote.getUpdatedAt());
+        entity.setId(vote.getVot_id());
+        entity.setTopicId(vote.getVot_topicId());
+        entity.setAssociateId(vote.getVot_associateId());
+        entity.setChoice(vote.getVot_choice());
+        entity.setCreatedAt(vote.getVot_createdAt());
+        entity.setUpdatedAt(vote.getVot_updatedAt());
         return entity;
     }
 
     public static Vote toDomain(VoteEntity entity) {
         if (entity == null) return null;
         Vote vote = new Vote();
-        vote.setId(entity.getId());
-        vote.setTopicId(entity.getTopicId());
-        vote.setAssociateId(entity.getAssociateId());
-        vote.setChoice(entity.getChoice());
-        vote.setCreatedAt(entity.getCreatedAt());
-        vote.setUpdatedAt(entity.getUpdatedAt());
+        vote.setVot_id(entity.getId());
+        vote.setVot_topicId(entity.getTopicId());
+        vote.setVot_associateId(entity.getAssociateId());
+        vote.setVot_choice(entity.getChoice());
+        vote.setVot_createdAt(entity.getCreatedAt());
+        vote.setVot_updatedAt(entity.getUpdatedAt());
         return vote;
     }
 

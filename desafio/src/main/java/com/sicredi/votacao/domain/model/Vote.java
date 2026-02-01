@@ -15,19 +15,19 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Vote {
 
-    private Long id;
-    private Long topicId;
-    private String associateId;
-    private Integer choice; // 1 = YES, 0 = NO
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Long vot_id;
+    private Long vot_topicId;
+    private String vot_associateId;
+    private Integer vot_choice; // 1 = YES, 0 = NO
+    private LocalDateTime vot_createdAt;
+    private LocalDateTime vot_updatedAt;
 
-    public Vote(Long topicId, String associateId, Integer choice) {
-        this.topicId = topicId;
-        this.associateId = associateId;
-        this.choice = choice;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+    public Vote(Long vot_topicId, String vot_associateId, Integer vot_choice) {
+        this.vot_topicId = vot_topicId;
+        this.vot_associateId = vot_associateId;
+        this.vot_choice = vot_choice;
+        this.vot_createdAt = LocalDateTime.now();
+        this.vot_updatedAt = LocalDateTime.now();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Vote {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vote vote = (Vote) o;
-        return Objects.equals(id, vote.id);
+        return Objects.equals(vot_id, vote.vot_id);
     }
 
 }

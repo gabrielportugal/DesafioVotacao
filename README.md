@@ -215,8 +215,8 @@ Os testes do projeto abrangem tanto testes unitários quanto testes de integraç
 ### Passos
 
 ```bash
-git clone https://github.com/<seu-usuario>/DesafioVotacao.git
-cd DesafioVotacao
+git clone https://github.com/gabrielportugal/DesafioVotacao.git
+cd DesafioVotacao/desafio
 ```
 
 ### Configuração do banco de dados
@@ -238,6 +238,13 @@ CREATE DATABASE votingdb_test;
 ```
 
 ---
+
+### 🐳 Com Docker
+```
+git clone https://github.com/gabrielportugal/DesafioVotacao.git
+cd DesafioVotacao/desafio
+docker-compose up --build
+```
 
 
 ## 🌐 Base URL

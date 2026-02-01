@@ -223,15 +223,15 @@ Ferramenta de teste de carga que simula:
 ### Prints do Prometheus
 - Uso da Memória Heap em MB
 
-<img src="./docs/memoriaHeapUsadaEmMb.jpg" alt="Uso da Memória Heap em MB" width="80%"/>
+<img src="./docs/memoriaHeapUsadaEmMb.jpg" alt="Uso da Memória Heap em MB" width="50%"/>
 
 - Percentual da Memória HEAP x Memória Máxima
 
-<img src="./docs/memoriaHeapXMax_percentual.png" alt="Percentual da Memória HEAP x Memória Máxima" width="80%"/>
+<img src="./docs/memoriaHeapXMax_percentual.png" alt="Percentual da Memória HEAP x Memória Máxima" width="50%"/>
 
 - Uso da CPU
 
-<img src="./docs/usoCpu.png" alt="Uso da CPU" width="80%"/>
+<img src="./docs/usoCpu.png" alt="Uso da CPU" width="50%"/>
 
 ---
 ## 📡 Exemplos Práticos

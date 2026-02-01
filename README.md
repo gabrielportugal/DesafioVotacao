@@ -20,15 +20,15 @@ O projeto adota **DDD Light** e **Clean Architecture**, com princípios **SOLID*
 
 
 ## 🚀 Diferenciais do Projeto
-
-- Arquitetura Clean e DDD Light
-- Lazy Update (Atualização Sob Demanda)
-- Configuração Centralizada
-- Integração Fake Desacoplada
-- Cobertura de Testes Abrangente
-- Pronto para Escalar
-- Baixo Acoplamento e Alta Coesão
-- Mappers Dedicados
+- **Arquitetura Clean com DDD Light**: Estrutura modular que separa claramente responsabilidades entre domínio, aplicação e infraestrutura
+- **Lazy Update (Atualização Sob Demanda)**: Carregamento inteligente de dados que otimiza performance e consumo de recursos
+- **Configuração Centralizada**: Gerenciamento unificado de propriedades e ambientes para fácil manutenção
+- **Integração Fake Desacoplada**: Implementações simuladas de serviços externos para desenvolvimento e testes isolados
+- **Cobertura de Testes Abrangente**: Suíte completa de testes que garante qualidade e confiabilidade do código
+- **Pronto para Escalar**: Arquitetura projetada para crescimento com capacidade de expansão horizontal e vertical
+- **Baixo Acoplamento e Alta Coesão**: Componentes independentes com responsabilidades bem definidas e interfaces claras
+- **Mappers Dedicados**: Conversão estruturada de dados entre camadas, garantindo integridade e consistência
+- **Git Hooks**: Executam testes automaticamente antes de cada push, incluindo testes unitários com Maven e validações de qualidade, impedindo push se os testes falharem.
 
 #### 🎯 Pontos de Destaque
 - **Arquitetura Limpa**: Separação clara entre domínio, aplicação e infraestrutura
@@ -195,6 +195,28 @@ A técnica de **Lazy Update** garante que sessões de votação sejam fechadas a
 - **develop:** Desenvolvimento contínuo.
 - **release/x.x:** Estabilização de versões.
 - **Git Flow:** Organização e controle de entregas.
+
+### 🔧 Configuração dos Git Hooks
+Para garantir a qualidade do código, este projeto utiliza Git Hooks que executam testes automaticamente antes de cada push.
+- Testes unitários com Maven
+- Validação de qualidade do código
+- Impede push se os testes falharem
+
+```bash
+# 1. Configure os hooks do Git
+git config core.hooksPath .githooks
+
+# 2. Teste o hook manualmente
+./.githooks/pre-push
+
+#3. Faça o push normalmente
+git push origin <branch>
+
+#3.1. Faça o push normalmente, sem realização do teste
+git push origin <branch> --no-verify
+
+```
+
 ---
 ## 🚀 Performance e Monitoramento
 

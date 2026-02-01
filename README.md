@@ -237,8 +237,371 @@ CREATE DATABASE votingdb_test;
 ./mvnw spring-boot:run
 ```
 
-Acesse:  
-`http://localhost:8080/api/v1`
+---
+
+
+## 🌐 Base URL
+
+```
+http://localhost:8080/api/v1
+```
+
+---
+
+## ⚡ Quick Start
+
+```bash
+# Suba o banco (PostgreSQL) e configure conforme instruções acima
+./mvnw spring-boot:run
+# Teste rápido: crie uma pauta
+curl -X POST http://localhost:8080/api/v1/topics \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Assembleia Orçamento 2026", "description": "Aprovação do orçamento anual do condomínio"}'
+```
+
+---
+
+## 📖 Endpoints da API
+
+### Módulos:
+- [Pautas (Topics)](#pautas-topics)
+- [Sessões (Sessions)](#sessoes-sessions)
+- [Votações (Votes)](#votacoes-votes)
+
+---
+
+## 🗂️ Pautas (Topics)
+
+### POST /api/v1/topics
+#### 📍 Rota
+`POST /api/v1/topics`
+#### Descrição
+Cria uma nova pauta para votação.
+#### Autenticação
+Não requer.
+#### Headers
+- Content-Type: application/json
+#### Request Body
+```json
+{
+  "title": "Assembleia Orçamento 2026",
+  "description": "Aprovação do orçamento anual do condomínio"
+}
+```
+#### Response 201
+```json
+{
+  "id": 1,
+  "title": "Assembleia Orçamento 2026",
+  "description": "Aprovação do orçamento anual do condomínio",
+  "status": "PENDING",
+  "createdAt": "2026-02-01T10:00:00"
+}
+```
+#### Response 400/404/409
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Título obrigatório",
+  "path": "/api/v1/topics",
+  "timestamp": "2026-02-01T10:00:00Z"
+}
+```
+#### Exemplo cURL
+```bash
+curl -X POST http://localhost:8080/api/v1/topics \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Assembleia Orçamento 2026", "description": "Aprovação do orçamento anual do condomínio"}'
+```
+#### Caminho Feliz
+1. Crie uma pauta
+2. Crie sessão para a pauta
+3. Registre votos
+4. Consulte resultado
+#### Possíveis erros
+- Título em branco
+- Descrição muito longa
+
+---
+
+### GET /api/v1/topics
+#### 📍 Rota
+`GET /api/v1/topics`
+#### Descrição
+Lista todas as pautas cadastradas (paginado).
+#### Autenticação
+Não requer.
+#### Headers
+Opcional: parâmetros de paginação Spring (page, size, sort)
+#### Response 200
+```json
+{
+  "_embedded": {
+    "topicResponseList": [
+      {
+        "id": 1,
+        "title": "Assembleia Orçamento 2026",
+        "description": "Aprovação do orçamento anual do condomínio",
+        "status": "PENDING",
+        "createdAt": "2026-02-01T10:00:00"
+      }
+    ]
+  },
+  "page": { "size": 20, "totalElements": 1, "totalPages": 1, "number": 0 }
+}
+```
+#### Exemplo cURL
+```bash
+curl http://localhost:8080/api/v1/topics
+```
+
+---
+
+### GET /api/v1/topics/{id}
+#### 📍 Rota
+`GET /api/v1/topics/{id}`
+#### Descrição
+Consulta uma pauta pelo ID.
+#### Response 200
+```json
+{
+  "id": 1,
+  "title": "Assembleia Orçamento 2026",
+  "description": "Aprovação do orçamento anual do condomínio",
+  "status": "PENDING",
+  "createdAt": "2026-02-01T10:00:00"
+}
+```
+#### Response 404
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Pauta não encontrada",
+  "path": "/api/v1/topics/99",
+  "timestamp": "2026-02-01T10:00:00Z"
+}
+```
+#### Exemplo cURL
+```bash
+curl http://localhost:8080/api/v1/topics/1
+```
+
+---
+
+### DELETE /api/v1/topics/{id}
+#### 📍 Rota
+`DELETE /api/v1/topics/{id}`
+#### Descrição
+Remove uma pauta pelo ID.
+#### Response 204
+Sem corpo.
+#### Response 404
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Pauta não encontrada",
+  "path": "/api/v1/topics/99",
+  "timestamp": "2026-02-01T10:00:00Z"
+}
+```
+#### Exemplo cURL
+```bash
+curl -X DELETE http://localhost:8080/api/v1/topics/1
+```
+
+---
+
+## 🗂️ Sessões (Sessions)
+
+### POST /api/v1/topics/{topicId}/sessions
+#### 📍 Rota
+`POST /api/v1/topics/{topicId}/sessions`
+#### Descrição
+Abre uma sessão de votação para uma pauta.
+#### Request Body (opcional)
+```json
+{
+  "durationMinutes": 10
+}
+```
+#### Response 201
+```json
+{
+  "id": 1,
+  "topicId": 1,
+  "opensAt": "2026-02-01T10:05:00Z",
+  "closesAt": "2026-02-01T10:15:00Z"
+}
+```
+#### Exemplo cURL
+```bash
+curl -X POST http://localhost:8080/api/v1/topics/1/sessions \
+  -H "Content-Type: application/json" \
+  -d '{"durationMinutes": 10}'
+```
+
+---
+
+## 🗂️ Votações (Votes)
+
+### GET /api/v1/topics/{topicId}/sessions/check-open
+#### 📍 Rota
+`GET /api/v1/topics/{topicId}/sessions/check-open`
+#### Descrição
+Verifica se é possível abrir uma sessão para a pauta.
+#### Response 200
+```json
+{
+  "canOpen": true
+}
+```
+#### Exemplo cURL
+```bash
+curl http://localhost:8080/api/v1/topics/1/sessions/check-open
+```
+
+---
+
+### GET /api/v1/sessions/{sessionId}/open-now
+#### 📍 Rota
+`GET /api/v1/sessions/{sessionId}/open-now`
+#### Descrição
+Verifica se a sessão está aberta neste momento.
+#### Response 200
+```json
+{
+  "openNow": true
+}
+```
+#### Exemplo cURL
+```bash
+curl http://localhost:8080/api/v1/sessions/1/open-now
+```
+
+---
+
+### POST /api/v1/sessions/{sessionId}/votes
+#### 📍 Rota
+`POST /api/v1/sessions/{sessionId}/votes`
+#### Descrição
+Registra um voto em uma sessão.
+#### Request Body
+```json
+{
+  "choice": "SIM",
+  "cpf": "12345678901"
+}
+```
+#### Response 201
+```json
+{
+  "id": 1,
+  "sessionId": 1,
+  "associateId": "12345678901",
+  "choice": "SIM",
+  "votedAt": "2026-02-01T10:10:00"
+}
+```
+#### Response 400/404/409
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "CPF inválido ou voto duplicado",
+  "path": "/api/v1/sessions/1/votes",
+  "timestamp": "2026-02-01T10:10:00Z"
+}
+```
+#### Exemplo cURL
+```bash
+curl -X POST http://localhost:8080/api/v1/sessions/1/votes \
+  -H "Content-Type: application/json" \
+  -d '{"choice": "SIM", "cpf": "12345678901"}'
+```
+
+---
+
+### GET /api/v1/sessions/{sessionId}/votes/count
+#### 📍 Rota
+`GET /api/v1/sessions/{sessionId}/votes/count`
+#### Descrição
+Consulta a apuração dos votos de uma sessão.
+#### Response 200
+```json
+{
+  "sessionId": 1,
+  "topicId": 1,
+  "yes": 10,
+  "no": 2,
+  "result": "APPROVED"
+}
+```
+#### Exemplo cURL
+```bash
+curl http://localhost:8080/api/v1/sessions/1/votes/count
+```
+
+---
+
+## 🧪 Como Testar (Fluxo Completo)
+
+1. **Criar pauta:**
+   ```bash
+   curl -X POST http://localhost:8080/api/v1/topics \
+     -H "Content-Type: application/json" \
+     -d '{"title": "Reforma da piscina", "description": "Votação para reforma da área de lazer"}'
+   ```
+2. **Abrir sessão:**
+   ```bash
+   curl -X POST http://localhost:8080/api/v1/topics/1/sessions \
+     -H "Content-Type: application/json" \
+     -d '{"durationMinutes": 15}'
+   ```
+3. **Registrar voto:**
+   ```bash
+   curl -X POST http://localhost:8080/api/v1/sessions/1/votes \
+     -H "Content-Type: application/json" \
+     -d '{"choice": "SIM", "cpf": "12345678901"}'
+   ```
+4. **Consultar apuração:**
+   ```bash
+   curl http://localhost:8080/api/v1/sessions/1/votes/count
+   ```
+
+---
+
+## 🧰 Ferramentas de Teste Recomendadas
+
+- [Postman](https://www.postman.com/) (coleção pronta em `postman/`)
+- [Insomnia](https://insomnia.rest/)
+- cURL (exemplos acima)
+
+---
+
+## 📊 Tabela de Status Codes
+
+| Código | Significado         | Quando ocorre                                 |
+|--------|---------------------|-----------------------------------------------|
+| 200    | OK                  | Consulta/listagem bem-sucedida                |
+| 201    | Created             | Recurso criado com sucesso                    |
+| 204    | No Content          | Remoção bem-sucedida                          |
+| 400    | Bad Request         | Dados inválidos, CPF mal formatado, etc.      |
+| 404    | Not Found           | Recurso não encontrado                        |
+| 409    | Conflict            | Voto duplicado, sessão já aberta, etc.        |
+| 500    | Internal Server Error | Erro inesperado no servidor                 |
+
+---
+
+## 🛠️ Dicas de Troubleshooting
+
+- **API não responde:** Verifique se o banco está criado e o serviço está rodando.
+- **Erro 400/409:** Confira se o CPF está correto e se não está votando duas vezes.
+- **Erro 404:** IDs informados existem? Pauta/sessão podem ter sido removidas.
+- **Erro banco:** Veja logs do Spring Boot e conexão com PostgreSQL.
+- **Swagger:** Acesse `/swagger-ui.html` para explorar e testar endpoints.
 
 ---
 

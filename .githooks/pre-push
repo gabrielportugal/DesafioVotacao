@@ -1,42 +1,38 @@
+# Edite o script .githooks/pre-push
+cat > .githooks/pre-push << 'EOF'
 #!/bin/bash
 
-current_branch=$(git symbolic-ref --short HEAD)
-echo "🔍 Validando push no branch: $current_branch"
+echo "🧪 Executando testes obrigatórios..."
 
-# Lista de branches que exigem testes
-test_required_branches=("develop" "main" "release/" "hotfix/")
-
-require_tests=false
-
-for branch in "${test_required_branches[@]}"; do
-    if [[ "$current_branch" == "$branch"* ]]; then
-        require_tests=true
-        break
-    fi
-done
-
-if [ "$require_tests" = true ]; then
-    echo "🧪 Executando testes obrigatórios para $current_branch..."
-    
-    # Tenta executar os testes
-    if ! mvn clean test; then
-        echo ""
-        echo "❌❌❌ PUSH BLOQUEADO ❌❌❌"
-        echo "Testes falharam no branch $current_branch."
-        echo "Execute 'mvn test' localmente para ver os erros."
-        echo ""
-        exit 1
-    fi
-    
-    echo "✅ Testes passaram! Prosseguindo com push..."
+# Navega até o diretório do Maven
+if [ -f "desafio/pom.xml" ]; then
+    cd desafio
+    echo "📁 Diretório do projeto: $(pwd)"
+elif [ -f "pom.xml" ]; then
+    echo "📁 Diretório do projeto: $(pwd)"
 else
-    echo "⚠️  Testes não obrigatórios para $current_branch"
-    read -p "Deseja executar testes mesmo assim? (s/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Ss]$ ]]; then
-        mvn test
-    fi
+    echo "❌ ERRO: pom.xml não encontrado!"
+    echo "Procurando pom.xml..."
+    find . -name "pom.xml" 2>/dev/null || echo "Nenhum pom.xml encontrado"
+    exit 1
 fi
 
+# Executa os testes
+echo "🔧 Executando mvn test..."
+mvn clean test
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌❌❌ PUSH BLOQUEADO ❌❌❌"
+    echo "Testes falharam no branch develop."
+    echo ""
+    echo "Execute para debug:"
+    echo "  cd desafio && mvn test"
+    exit 1
+fi
+
+echo "✅ Testes passaram! Continuando push..."
 exit 0
 EOF
+
+chmod +x .githooks/pre-push

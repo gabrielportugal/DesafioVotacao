@@ -189,6 +189,10 @@ Importe os arquivos no Postman:
 | Usuários simultâneos| 2000    | ✅      | >=2000    |
 | Latência média      | 140ms   | ✅      | <800ms    |
 
+### 📊 Teste unitário e integração
+
+<img src="./docs/teste.png" alt="Teste unitário e integração" width="80%"/>
+
 ---
 
 ## ⚙️ Funcionalidades Técnicas

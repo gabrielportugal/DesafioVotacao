@@ -256,10 +256,14 @@ git config core.hooksPath .githooks
 #3. Faça o push normalmente
 git push origin <branch>
 
-#3.1. Faça o push normalmente, sem realização do teste
+#3.1. Faça o push sem realização do teste
 git push origin <branch> --no-verify
 
 ```
+
+<img src="./docs/githook.png" alt="GitHook" width="80%"/>
+
+<img src="./docs/githook_final.png" alt="GitHook Final" width="80%"/>
 
 ---
 ## 🚀 Performance e Monitoramento
